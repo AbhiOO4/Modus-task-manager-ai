@@ -81,7 +81,7 @@ export const deleteTask = async (req, res) => {
 
 export const getAiSubtasks = async (req, res) => {
   try {
-    const { taskTitle, taskDesc } = req.body;
+    const { task, desc } = req.body;
 
     if (!process.env.GEMINI_API_KEY) {
       return res.status(500).json({ error: "API Key is missing from .env file" });
@@ -98,8 +98,8 @@ export const getAiSubtasks = async (req, res) => {
 
     // We refine the prompt to ensure it doesn't try to "talk" to you
     const prompt = `Generate a JSON array of strings containing 3 to 5 subtasks for:
-                    Task: ${taskTitle}
-                    Description: ${taskDesc || "No description provided"}
+                    Task: ${task}
+                    Description: ${desc || "No description provided"}
                     Return ONLY the JSON. Example: ["Step 1", "Step 2"]`;
 
     const result = await model.generateContent(prompt);

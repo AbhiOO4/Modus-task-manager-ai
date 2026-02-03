@@ -2,7 +2,7 @@ import { NavLink, Outlet } from "react-router"
 import {LayoutDashboard, ListChecks, Plus, LogOut} from 'lucide-react'
 
 const SideBar = ({ theme, setTheme }) => {
-    const themes = ["light", "lofi","winter", "dark", "synthwave", "halloween", "forest",  "black", "dracula", "business", "night"];
+    const themes = ["light", "lofi","winter", "dark", "halloween", "forest", "dracula", "business", "night"];
 
     return (
         <div className="drawer lg:drawer-open">
