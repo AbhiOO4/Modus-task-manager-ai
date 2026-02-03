@@ -5,6 +5,8 @@ import Tasks from './pages/Tasks'
 import CreateTask from './pages/CreateTask'
 import SideBar from './components/SideBar'
 import ViewTask from './pages/ViewTask'
+import Login from './pages/Login'
+import SignUp from './pages/SignUp'
 import { useEffect, useState } from 'react'
 
 
@@ -20,6 +22,8 @@ const App = () => {
       <Routes>
 
         <Route path='/' element={<LandingPage />}></Route>
+        <Route path='/login' element={<Login />} ></Route>
+        <Route path='/signup' element={<SignUp />} ></Route>
 
         <Route element={<SideBar theme={theme} setTheme={setTheme} />}>
           <Route path='/DashBoard' element={<DashBoard />}></Route>

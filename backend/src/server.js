@@ -9,9 +9,15 @@ import tasksRoutes from './routes/tasksRoutes.js'
 
 import authRoutes from './routes/authRoutes.js'
 
+import cors from 'cors'
+
 dotenv.config({ quiet: true })
 
 const app = express()
+
+app.use(cors({
+        origin: "http://localhost:5173"
+    }))
 
 app.use(express.json())
 

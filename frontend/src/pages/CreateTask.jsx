@@ -2,7 +2,7 @@ import { Sparkles } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import SubTaskItem from '../components/SubTaskItem';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import api from '../lib/axios.js';
 
 function CreateTask() {
@@ -56,7 +56,7 @@ function CreateTask() {
 
   const addSubTask = (e) => {
     e.preventDefault();
-    
+
     if (!subTask || subTask.trim() === "") {
       return toast.error("Subtask field is empty");
     }
@@ -236,15 +236,24 @@ function CreateTask() {
                 <div className="form-control mb-5">
                   <fieldset className="fieldset">
                     <legend className="fieldset-legend">Select Category</legend>
-                    <input type="text" className="input" placeholder="Enter task category" list="browsers" name='category' value={task.category} onChange={handleChange} />
-                    <datalist id="browsers">
-                      <option value="work"></option>
-                      <option value="studies"></option>
-                      <option value="hobbies"></option>
-                      <option value="sports"></option>
-                      <option value="chill"></option>
-                    </datalist>
-                    <p className="label">Optional</p>
+
+                    <select
+                      className="select select-bordered w-full max-w-xs min-w-[180px] select-sm"
+                      name="category"
+                      value={task.category}
+                      onChange={handleChange}
+                    >
+                      {/* Default placeholder option */}
+                      <option value="" disabled>Pick a category</option>
+
+                      <option value="work">Work</option>
+                      <option value="studies">Studies</option>
+                      <option value="hobbies">Hobbies</option>
+                      <option value="sports">Sports</option>
+                      <option value="chill">Chill</option>
+                    </select>
+
+                    <p className="label">Required for organization</p>
                   </fieldset>
                 </div>
 
@@ -258,7 +267,9 @@ function CreateTask() {
 
 
             </div>
-            <button className='btn btn-primary' disabled={isSubmitting} onClick={handleSubmit}>Add task</button>
+            <button className='btn btn-primary' disabled={isSubmitting} onClick={handleSubmit}>
+               {isSubmitting ?  <div><span className="loading loading-spinner"></span> <span>Creating...</span></div> : "Create" }
+            </button>
           </form>
         </div>
       </div>
