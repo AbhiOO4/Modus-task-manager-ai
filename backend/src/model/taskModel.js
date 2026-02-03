@@ -59,10 +59,10 @@ const taskSchema = new mongoose.Schema(
       default: 5,
     },
 
-    emailIds: {
-      type: [String],
-      default: [],
-    },
+    // emailIds: {
+    //   type: [String],
+    //   default: [],
+    // },
 
     author_id: {
       type: mongoose.Schema.Types.ObjectId,

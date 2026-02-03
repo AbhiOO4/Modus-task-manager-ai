@@ -2,6 +2,9 @@
 import Joi from 'joi'
 
 export const taskValidation = (req, res, next) => {
+    if (req.user) {
+        req.body.author_id = req.user._id;
+    }
     const taskSchema = Joi.object({
         task: Joi.string().min(1).max(60).required(),
         desc: Joi.string().min(1).required(),
@@ -17,9 +20,9 @@ export const taskValidation = (req, res, next) => {
             to: Joi.date().greater(Joi.ref("from")).required(),
         }).required(),
         priority: Joi.number().valid(1,2,3,4,5).default(5),
-        emailIds: Joi.array().items(Joi.string().email()).default([]),
         completed: Joi.boolean().default(false),
-        autoDeleteAfterDue: Joi.boolean().default(false)
+        autoDeleteAfterDue: Joi.boolean().default(false),
+        author_id: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required()
     })
 
     const {error} = taskSchema.validate(req.body)

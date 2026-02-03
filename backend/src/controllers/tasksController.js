@@ -29,7 +29,7 @@ export const getTasks = async (req, res) => {
 
 export const createTask = async (req, res) => {
     try{
-        const newTask = new Task({...req.body, author_id: req.user._id})
+        const newTask = new Task({...req.body})
         const savedTask = await newTask.save()
         res.status(201).json(savedTask)
     }catch(error){
