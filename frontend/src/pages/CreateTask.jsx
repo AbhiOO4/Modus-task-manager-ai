@@ -138,7 +138,7 @@ function CreateTask() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const response = await api.post('/tasks', task);
+      const response = await api.post('/tasks', taskInfo);
 
       // Success handling
       toast.success("Task created successfully!");
@@ -270,7 +270,7 @@ function CreateTask() {
                     <legend className="fieldset-legend">Select Category</legend>
 
                     <select
-                      className="select select-bordered w-full max-w-xs min-w-[180px] select-sm"
+                      className="select select-bordered w-full max-w-xs  select-sm"
                       name="category"
                       value={taskInfo.category}
                       onChange={handleChange}
@@ -278,7 +278,7 @@ function CreateTask() {
                       {/* Default placeholder option */}
                       <option value="" disabled>Pick a category</option>
 
-                      <option value="professional">Professional</option>
+                      <option value="">Work</option>
                       <option value="studies">Studies</option>
                       <option value="hobbies">Hobbies</option>
                       <option value="personal">Personal</option>

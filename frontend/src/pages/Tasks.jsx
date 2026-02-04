@@ -11,13 +11,16 @@ function Tasks() {
   const [isLoading, setIsLoading] = useState(false)
   const [tasks, setTasks] = useState([])
   const [activeCat, setActiveCat] = useState(null)
-  const [sort, setSort] = useState(null)
+  const [sortBy, setSortBy] = useState('latest')
 
   useEffect(() => {
     setIsLoading(true)
     const fetchTasks = async () => {
       try {
-        const res = await api.get('/tasks')
+        const res = await api.get('/tasks', {params: {
+          category: activeCat,
+          sort: sortBy
+        }})
         setTasks(res.data)
       } catch (error) {
         toast.error('Error fetching notes')
@@ -28,17 +31,22 @@ function Tasks() {
     }
 
     fetchTasks()
-  }, [])
+  }, [activeCat, sortBy])
+
+  const onClear = () => {
+    setActiveCat(null)
+    setSortBy('latest')
+  }
 
   return (
     <div className="min-h-screen pe-3">
-      <TasksHeader/>
-      <CategorySelector/>
+      <TasksHeader sortBy={sortBy} setSortBy={setSortBy} onClear={onClear}/>
+      <CategorySelector activeCat={activeCat} setActiveCat={setActiveCat} />
       {isLoading && <Loading/>}
       {tasks.length == 0 && <EmptyTasks/>}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {tasks.length>0 && tasks.map((task) => {
-          return (<TaskCard key={task._id} task={task} setTasks={setTasks} />)
+          return (<TaskCard key={task._id} task={task} setTasks={setTasks} setActiveCat={setActiveCat} />)
         })}
       </div>
     </div>

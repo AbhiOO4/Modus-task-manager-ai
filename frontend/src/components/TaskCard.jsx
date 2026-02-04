@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import api from "../lib/axios";
 import { Circle } from "lucide-react";
 
-function TaskCard({ task, setTasks }) {
+function TaskCard({ task, setTasks, setActiveCat }) {
     const priorityMap = {
         1: "#dc2626", // bg-red-600
         2: "#c2410c", // bg-orange-700
@@ -29,6 +29,11 @@ function TaskCard({ task, setTasks }) {
             console.log(error)
         }
     }
+
+    const changeCategory = (e, category) => {
+        e.preventDefault()
+        setActiveCat(category)
+    }
     return (
         
         <div className="card w-96 shadow-2xl border-2 border-secondary bg-base-300">
@@ -45,7 +50,7 @@ function TaskCard({ task, setTasks }) {
                             <Link to={`/Task/edit/${task._id}`} className=""><SquarePen /></Link>
                             <button className='btn btn-ghost btn-xs text-error' onClick={(e) => handleDelete(e, task._id)}><Trash /></button>
                         </div>
-                        <div className="btn btn-soft btn-secondary">{task.category}</div>
+                        <button className="btn btn-soft btn-secondary" onClick={(e) => changeCategory(e, task.category)}>{task.category}</button>
                     </div>
                 </div>
             </Link>

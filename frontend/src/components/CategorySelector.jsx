@@ -24,6 +24,10 @@ const CategorySelector = ({ activeCat, setActiveCat }) => {
           {cat.label}
         </button>
       ))}
+      <button onClick={() => setActiveCat(null)} className={`btn btn-soft btn-sm md:btn-md btn-default ${activeCat === null 
+            ? 'border-2 border-current shadow-sm' 
+            : 'bg-opacity-20 border-transparent'
+          }`}>All</button>
     </div>
   );
 };
