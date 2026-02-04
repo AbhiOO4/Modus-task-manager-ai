@@ -1,8 +1,19 @@
-import { NavLink, Outlet } from "react-router"
+import { NavLink, Outlet, useNavigate } from "react-router"
 import {LayoutDashboard, ListChecks, Plus, LogOut} from 'lucide-react'
+
 
 const SideBar = ({ theme, setTheme }) => {
     const themes = ["light", "lofi","winter", "dark", "halloween", "forest", "dracula", "business", "night"];
+    const navigate = useNavigate()
+    const handleLogout = () => {
+        if (!window.confirm("Are you sure you want to delete this Note ?")) {
+            return
+        }
+        localStorage.removeItem('token')
+        localStorage.removeItem('username')
+        navigate('/')
+        toast.success("Logged out successfully")
+    }
 
     return (
         <div className="drawer lg:drawer-open">
@@ -71,7 +82,7 @@ const SideBar = ({ theme, setTheme }) => {
                         </li>
 
                         <li>
-                            <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Logout">
+                            <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right" type="button" onClick={handleLogout} data-tip="Logout">
                                 <LogOut  size={20}/>
                                 <span className="is-drawer-close:hidden"> Logout</span>
                             </button>

@@ -170,7 +170,7 @@ function CreateTask() {
     <div>
       <div className="card card-side bg-base-300 shadow-sm p-4">
         <div className="card-body">
-          <form className="">
+          <form className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-2">
 
               {/* first col */}
@@ -178,20 +178,15 @@ function CreateTask() {
               {/* task title */}
               <div className="p-4">
                 <div className="mb-5 form-control">
-                  <fieldset className="fieldset">
                     <legend className="fieldset-legend">Task</legend>
-                    <input type="text" className="input" placeholder="Type here" name='task' value={taskInfo.task} onChange={handleChange} />
-                    <p className="label">important</p>
-                  </fieldset>
+                    <input type="text" className="input mt-2" placeholder="Type here" name='task' value={taskInfo.task} onChange={handleChange} />
                 </div>
+
                 {/* task desc */}
 
                 <div className="form-control w-full max-w-xs mb-5">
                   <legend className="fieldset-legend">Task Description</legend>
                   <textarea className="textarea textarea-bordered h-24 max-w-full min-w-auto" name="desc" value={taskInfo.desc} onChange={handleChange} placeholder="Enter task description"></textarea>
-                  <label className="label">
-                    <span className="label-text-alt">Enter task description</span>
-                  </label>
                 </div>
 
                 {/* add subtasks */}
@@ -199,10 +194,10 @@ function CreateTask() {
                 <div className="space-y-4 mb-5">
 
                   <label className="pb-0">
-                    <span className="label-text font-bold ">Add Subtasks</span>
+                    <span className="label-text font-bold">Add Subtasks</span>
                   </label>
 
-                  <div className="join w-full shadow-sm">
+                  <div className="join w-full shadow-sm mt-2">
                     <input
                       type="text"
                       placeholder="Enter subtask name..."
@@ -237,12 +232,10 @@ function CreateTask() {
               <div className="p-4">
                 {/* from to date  */}
                 <div className="mb-5 form-control">
-                  <fieldset className="fieldset">
                     <legend className="fieldset-legend">From</legend>
                     <input type="datetime-local" className="input" name='from' value={taskInfo.schedule.from} onChange={handleChange} />
                     <legend className="fieldset-legend">To</legend>
                     <input type="datetime-local" className="input" name='to' value={taskInfo.schedule.to} onChange={handleChange} />
-                  </fieldset>
                 </div>
 
 
@@ -251,7 +244,6 @@ function CreateTask() {
 
                 {/* priority  */}
                 <div className="mb-4 form-control">
-                  <fieldset className="fieldset">
                     <legend className="fieldset-legend">Select Priority</legend>
                     <input
                       type="number"
@@ -264,8 +256,6 @@ function CreateTask() {
                       value={taskInfo.priority}
                       onChange={handleChange}
                     />
-                    <p className="label">Optional</p>
-                  </fieldset>
                 </div>
 
 
@@ -288,11 +278,11 @@ function CreateTask() {
                       {/* Default placeholder option */}
                       <option value="" disabled>Pick a category</option>
 
-                      <option value="work">Work</option>
+                      <option value="professional">Professional</option>
                       <option value="studies">Studies</option>
                       <option value="hobbies">Hobbies</option>
-                      <option value="sports">Sports</option>
-                      <option value="chill">Chill</option>
+                      <option value="personal">Personal</option>
+                      <option value="social">Social</option>
                     </select>
 
                     <p className="label">Required for organization</p>
@@ -307,11 +297,10 @@ function CreateTask() {
                 </div>
               </div>
 
-
+              <button className='btn btn-primary w-25' disabled={isSubmitting} onClick={handleSubmit}>
+                {isSubmitting ? <div><span className="loading loading-spinner"></span> <span>Creating...</span></div> : "Create"}
+              </button>
             </div>
-            <button className='btn btn-primary' disabled={isSubmitting} onClick={handleSubmit}>
-               {isSubmitting ?  <div><span className="loading loading-spinner"></span> <span>Creating...</span></div> : "Create" }
-            </button>
           </form>
         </div>
       </div>
