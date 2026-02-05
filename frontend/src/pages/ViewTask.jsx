@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import api from '../lib/axios'
-import { MoveLeft, MoveRight, Circle } from 'lucide-react'
+import { MoveLeft, MoveRight, Circle, Check, SquarePen, X } from 'lucide-react'
 import { formatDateTime } from '../lib/utils'
 import toast from 'react-hot-toast'
+import Modal from '../components/Modal'
 
 function ViewTask() {
   const [task, setTask] = useState({})
   const { id } = useParams()
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [open, setOpen] = useState(false)
+  const [open2, setOpen2] = useState(false)
 
   const priorityMap = {
     1: "#dc2626", // bg-red-600
@@ -49,6 +52,25 @@ function ViewTask() {
 
    
   };
+
+  const checkAll = () => {
+    const allCompleted = task.subTasks.map((subTask) => ({
+      ...subTask,
+      completed: true
+    }))
+    setOpen(false)
+    setTask({...task, subTasks: allCompleted})
+    toast.success("Congrats you have completed the task !!")
+  }
+
+  const unCheckAll = () => {
+    const allUnChecked = task.subTasks.map((subTask) => ({
+      ...subTask,
+      completed: false
+    }))
+    setOpen2(false)
+    setTask({...task, subTasks: allUnChecked})
+  }
 
   const saveSubTasks = async () => {
     setSaving(true)
@@ -122,10 +144,46 @@ function ViewTask() {
                   ))}
                 </ul>
               </div>)}
+              <button className='btn btn-soft btn-primary mt-4' onClick={() => setOpen(true)}><Check /></button>
+              <button className='btn btn-soft btn-primary mt-4 ms-2' onClick={() => setOpen2(true)}><X /></button>
+            {/* check all confirmation modal */}
+            <Modal open={open} onClose={() => setOpen(false)}>
+              <div className='text-center w-70'>
+                {/* <Check size={56} color='green' className='mx-auto' /> */}
+                <div className='mx-auto my-4 w-48'>
+                  <h3 className='tex-lg front-black'>Confirm Check All</h3>
+                  <p className='text-sm'>
+                    Are you you sure you want to check all subTasks ?
+                  </p>
+                </div>
+                <div className='flex justify-between gap-4 mt-7'>
+                  <button className='btn btn-soft btn-accent w-28' onClick={checkAll}><Check/></button>
+                  <button className='btn btn-soft btn-info w-28' onClick={() => setOpen(false)}><X/></button>
+                </div>
+              </div>
+            </Modal>
+
+            {/*Un check all confirmation modal */}
+             <Modal open={open2} onClose={() => setOpen2(false)}>
+              <div className='text-center w-70'>
+                {/* <Check size={56} color='green' className='mx-auto' /> */}
+                <div className='mx-auto my-4 w-48'>
+                  <h3 className='tex-lg front-black'>Confirm uncheck</h3>
+                  <p className='text-sm'>
+                    Are you you sure you want to un check all subTasks ?
+                  </p>
+                </div>
+                <div className='flex justify-between gap-4 mt-7'>
+                  <button className='btn btn-soft btn-accent w-28' onClick={unCheckAll}><Check/></button>
+                  <button className='btn btn-soft btn-info w-28' onClick={() => setOpen2(false)}><X/></button>
+                </div>
+              </div>
+            </Modal>
+
           </div>
           <div className='mt-3 flex gap-4 justify-start'>
-                <button className='btn btn-primary rounded-3xl px-5' type='button' onClick={saveSubTasks}>Save</button>
-                <Link className='btn btn-info rounded-3xl px-5' to={`/edit/${task._id}`}>Edit</Link>
+                <button className='btn btn-secondary rounded-3xl px-5' type='button' onClick={saveSubTasks}>Save Changes</button>
+                <Link className='btn btn-soft btn-info rounded-3xl px-5' to={`/edit/${task._id}`}><SquarePen />Edit</Link>
               </div>
         </div>
 
