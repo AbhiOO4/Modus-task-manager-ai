@@ -37,7 +37,7 @@ function TaskCard({ task, setTasks, setActiveCat }) {
     return (
         
         <div className="card w-96 shadow-2xl border-2 border-secondary bg-base-300">
-            <Link to={'/Task/:id'}>
+            <Link to={`/Task/${task._id}`}>
                 <div className="card-body">
                     <h2 className="card-title">
                         {task.task}

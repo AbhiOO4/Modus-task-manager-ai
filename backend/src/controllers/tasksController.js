@@ -117,4 +117,34 @@ export const getAiSubtasks = async (req, res) => {
   }
 };
 
+export const updateSubTasks = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { subTasks } = req.body;
+
+    // 1. Validation: Ensure subTasks is actually an array
+    if (!Array.isArray(subTasks)) {
+      return res.status(400).json({ message: "Invalid data format: subTasks must be an array." });
+    }
+
+    // 2. Find and Update
+    // { new: true } returns the updated document instead of the old one
+    // { runValidators: true } ensures the new array follows your Schema rules
+    const updatedTask = await Task.findByIdAndUpdate(
+      id,
+      { $set: { subTasks: subTasks } },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedTask) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    res.status(200).json(updatedTask);
+  } catch (error) {
+    console.error("Error updating subtasks:", error);
+    res.status(500).json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
 

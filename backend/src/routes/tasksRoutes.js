@@ -1,7 +1,7 @@
 
 import express from 'express'
 
-import {getTasks, createTask, getTask, deleteTask, editTask, getAiSubtasks} from '../controllers/tasksController.js'
+import {getTasks, createTask, getTask, deleteTask, editTask, getAiSubtasks, updateSubTasks} from '../controllers/tasksController.js'
 
 import { taskValidation } from '../middlewares/taskValidation.js'
 
@@ -28,6 +28,9 @@ router.delete('/:id', deleteTask)
 
 //generate subtasks using gemini ai
 router.post('/ai/task-breakdown', getAiSubtasks)
+
+//path request to update the subtasks completion
+router.patch('/:id', updateSubTasks)
 
 
 
