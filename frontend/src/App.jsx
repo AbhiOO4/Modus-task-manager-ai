@@ -7,6 +7,7 @@ import SideBar from './components/SideBar'
 import ViewTask from './pages/ViewTask'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
+import EditTask from './pages/EditTask'
 import { useEffect, useState } from 'react'
 
 
@@ -30,6 +31,7 @@ const App = () => {
           <Route path='/Tasks' element={<Tasks />}></Route>
           <Route path='/Create' element={<CreateTask />}></Route>
           <Route path='/Task/:id' element={<ViewTask />}></Route>
+          <Route path='/edit/:id' element={<EditTask />}></Route>
         </Route>
       </Routes>
     </div>

@@ -53,7 +53,7 @@ function TaskCard({ task, setTasks, setActiveCat }) {
                     </div>
                     <div className="card-actions justify-between items-center">
                          <div className='flex items-center gap-1'>
-                            <Link to={`/Task/edit/${task._id}`} className=""><SquarePen /></Link>
+                            <Link to={`/edit/${task._id}`} className=""><SquarePen /></Link>
                             <button className='btn btn-ghost btn-xs text-error' onClick={(e) => handleDelete(e, task._id)}><Trash /></button>
                         </div>
                         <button className="btn btn-soft btn-secondary" onClick={(e) => changeCategory(e, task.category)}>{task.category}</button>

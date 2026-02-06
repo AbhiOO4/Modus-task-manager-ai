@@ -1,4 +1,4 @@
-import { Sparkles } from 'lucide-react'
+import { Sparkles, Info } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import SubTaskItem from '../components/SubTaskItem';
@@ -166,147 +166,200 @@ function CreateTask() {
   };
 
 
-  return (
-    <div>
-      <div className="card card-side bg-base-300 shadow-sm p-4">
-        <div className="card-body">
-          <form className="p-4">
-            <div className="grid grid-cols-1 md:grid-cols-2">
+ return (
+  <div className="max-w-6xl mx-auto p-4 md:p-8 animate-in fade-in duration-500">
+    {/* Header */}
+    <div className="mb-8">
+      <h1 className="text-3xl font-extrabold flex items-center gap-3">
+        <div className="bg-primary p-2 rounded-lg text-primary-content">
+          <Sparkles size={24} />
+        </div>
+        Create New Task
+      </h1>
+      <p className="text-base-content/60 mt-1">Organize your day and boost your productivity.</p>
+    </div>
 
-              {/* first col */}
+    {/* Using items-start ensures columns don't stretch and mess up alignment */}
+    <form className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      
+      {/* LEFT COLUMN: Main Info */}
+      <div className="lg:col-span-2 flex flex-col gap-6">
+        <div className="card bg-base-100 border border-base-300 shadow-sm">
+          <div className="card-body p-6 md:p-8 gap-6">
+            <div className="form-control w-full">
+              <label className="label font-bold text-sm uppercase tracking-wider text-base-content/70">Task Title</label>
+              <input 
+                type="text" 
+                className="input input-bordered input-lg focus:input-primary font-medium w-full" 
+                placeholder="What needs to be done?" 
+                name='task' 
+                value={taskInfo.task} 
+                onChange={handleChange} 
+              />
+            </div>
 
-              {/* task title */}
-              <div className="p-4">
-                <div className="mb-5 form-control">
-                    <legend className="fieldset-legend">Task</legend>
-                    <input type="text" className="input mt-2" placeholder="Type here" name='task' value={taskInfo.task} onChange={handleChange} />
-                </div>
+            <div className="form-control w-full">
+              <label className="label font-bold text-sm uppercase tracking-wider text-base-content/70">Description</label>
+              <textarea 
+                className="textarea textarea-bordered h-32 text-base leading-relaxed focus:textarea-primary w-full" 
+                name="desc" 
+                value={taskInfo.desc} 
+                onChange={handleChange} 
+                placeholder="Add some details about this task..."
+              ></textarea>
+            </div>
+          </div>
+        </div>
 
-                {/* task desc */}
-
-                <div className="form-control w-full max-w-xs mb-5">
-                  <legend className="fieldset-legend">Task Description</legend>
-                  <textarea className="textarea textarea-bordered h-24 max-w-full min-w-auto" name="desc" value={taskInfo.desc} onChange={handleChange} placeholder="Enter task description"></textarea>
-                </div>
-
-                {/* add subtasks */}
-
-                <div className="space-y-4 mb-5">
-
-                  <label className="pb-0">
-                    <span className="label-text font-bold">Add Subtasks</span>
-                  </label>
-
-                  <div className="join w-full shadow-sm mt-2">
-                    <input
-                      type="text"
-                      placeholder="Enter subtask name..."
-                      className="input input-bordered join-item w-full focus:outline-none focus:border-primary"
-                      name='subTask'
-                      value={subTask}
-                      onChange={(e) => setSubTask(e.target.value)}
-                    />
-                    <button className="btn btn-info join-item" onClick={addSubTask}>
-                      Add
-                    </button>
-                  </div>
-
-                  <button className="btn btn-secondary" type='button' disabled={isBreaking} onClick={taskBreakdown}>{isBreaking ?  <div><span className="loading loading-spinner"></span> <span>Breaking down</span></div> : <><Sparkles size={20} />Task-breakdown</> }</button>
-
-                  <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-
-                    {/* Editable Subtask Item */}
-                    {taskInfo.subTasks.length > 0 && taskInfo.subTasks.map((subTask, index) => (
-                      <SubTaskItem
-                        key={index}
-                        index={index}
-                        subTask={subTask}
-                        onUpdate={handleSubTaskUpdate}
-                        onDelete={handleSubTaskDelete}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-4">
-                {/* from to date  */}
-                <div className="mb-5 form-control">
-                    <legend className="fieldset-legend">From</legend>
-                    <input type="datetime-local" className="input" name='from' value={taskInfo.schedule.from} onChange={handleChange} />
-                    <legend className="fieldset-legend">To</legend>
-                    <input type="datetime-local" className="input" name='to' value={taskInfo.schedule.to} onChange={handleChange} />
-                </div>
-
-
-                {/* second col */}
-
-
-                {/* priority  */}
-                <div className="mb-4 form-control">
-                    <legend className="fieldset-legend">Select Priority</legend>
-                    <input
-                      type="number"
-                      className="input validator"
-                      placeholder="Priority level between 1 to 5"
-                      min="1"
-                      max="5"
-                      title="Must be between 1 to 5"
-                      name='priority'
-                      value={taskInfo.priority}
-                      onChange={handleChange}
-                    />
-                </div>
-
-
-
-                {/* add people email id */}
-
-
-                {/* category */}
-
-                <div className="form-control mb-5">
-                  <fieldset className="fieldset">
-                    <legend className="fieldset-legend">Select Category</legend>
-
-                    <select
-                      className="select select-bordered w-full max-w-xs  select-sm"
-                      name="category"
-                      value={taskInfo.category}
-                      onChange={handleChange}
-                    >
-                      {/* Default placeholder option */}
-                      <option value="" disabled>Pick a category</option>
-
-                      <option value="">Work</option>
-                      <option value="studies">Studies</option>
-                      <option value="hobbies">Hobbies</option>
-                      <option value="personal">Personal</option>
-                      <option value="social">Social</option>
-                    </select>
-
-                    <p className="label">Required for organization</p>
-                  </fieldset>
-                </div>
-
-
-                {/* auto delete toggle button */}
-                <div>
-                  <legend className="fieldset-legend">Auto Delete on completion after Due date</legend>
-                  <input type="checkbox" className="toggle toggle-error" name='autoDeleteAfterDue' checked={taskInfo.autoDeleteAfterDue} onChange={handleCheckboxChange} />
-                </div>
-              </div>
-
-              <button className='btn btn-primary w-25' disabled={isSubmitting} onClick={handleSubmit}>
-                {isSubmitting ? <div><span className="loading loading-spinner"></span> <span>Creating...</span></div> : "Create"}
+        {/* Subtasks Section */}
+        <div className="card bg-base-100 border border-base-300 shadow-sm">
+          <div className="card-body p-6 md:p-8">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+              <label className="label font-bold text-sm uppercase tracking-wider text-base-content/70 p-0">
+                Subtasks
+              </label>
+              <button 
+                className="btn btn-sm btn-outline btn-secondary gap-2" 
+                type='button' 
+                disabled={isBreaking} 
+                onClick={taskBreakdown}
+              >
+                {isBreaking ? <span className="loading loading-spinner loading-xs"></span> : <Sparkles size={16} />}
+                AI Breakdown
               </button>
             </div>
-          </form>
+
+            <div className="join w-full mb-6">
+              <input
+                type="text"
+                placeholder="Add a step..."
+                className="input input-bordered join-item w-full focus:outline-none"
+                name='subTask'
+                value={subTask}
+                onChange={(e) => setSubTask(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSubTask(e))}
+              />
+              <button className="btn btn-neutral join-item px-6" onClick={addSubTask} type="button">
+                Add
+              </button>
+            </div>
+
+            <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
+              {taskInfo.subTasks?.length > 0 ? (
+                taskInfo.subTasks.map((st, index) => (
+                  <SubTaskItem
+                    key={index}
+                    index={index}
+                    subTask={st}
+                    onUpdate={handleSubTaskUpdate}
+                    onDelete={handleSubTaskDelete}
+                  />
+                ))
+              ) : (
+                <div className="text-center py-10 bg-base-200/50 rounded-xl border-2 border-dashed border-base-300 text-base-content/40">
+                  No subtasks added yet. Try the AI Breakdown!
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
-    </div>
-  )
+      {/* RIGHT COLUMN: Settings Sidebar */}
+      <div className="flex flex-col gap-6 lg:sticky lg:top-8">
+        <div className="card bg-base-200 border border-base-300 shadow-sm overflow-visible">
+          <div className="card-body p-6 space-y-6">
+            
+            {/* Category */}
+            <div className="form-control">
+              <label className="label font-bold text-xs uppercase tracking-widest text-base-content/50">Category</label>
+              <select
+                className="select select-bordered w-full mt-1"
+                name="category"
+                value={taskInfo.category}
+                onChange={handleChange}
+              >
+                <option value="" disabled>Pick a category</option>
+                <option value="work">Work</option>
+                <option value="studies">Studies</option>
+                <option value="hobbies">Hobbies</option>
+                <option value="personal">Personal</option>
+                <option value="social">Social</option>
+              </select>
+            </div>
+
+            {/* Priority */}
+            <div className="form-control">
+              <label className="label font-bold text-xs uppercase tracking-widest text-base-content/50">Priority Level</label>
+              <input
+                type="range"
+                min="1"
+                max="5"
+                className="range range-primary range-sm mt-2"
+                name='priority'
+                value={taskInfo.priority}
+                onChange={handleChange}
+              />
+              <div className="flex justify-between text-xs px-1 mt-2 font-bold opacity-70">
+                <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+              </div>
+            </div>
+
+            <div className="divider opacity-50 m-0"></div>
+
+            {/* Schedule */}
+            <div className="space-y-4">
+              <label className="label font-bold text-xs uppercase tracking-widest text-base-content/50 p-0">Schedule</label>
+              <div className="bg-base-100 p-4 rounded-xl border border-base-300 space-y-4">
+                <div className="form-control">
+                  <span className="text-[10px] font-bold text-primary uppercase">From</span>
+                  <input type="datetime-local" className="input input-sm input-ghost w-full p-0 h-auto mt-1 focus:bg-transparent" name='from' value={taskInfo.schedule?.from} onChange={handleChange} />
+                </div>
+                <div className="form-control">
+                  <span className="text-[10px] font-bold text-error uppercase">To</span>
+                  <input type="datetime-local" className="input input-sm input-ghost w-full p-0 h-auto mt-1 focus:bg-transparent" name='to' value={taskInfo.schedule?.to} onChange={handleChange} />
+                </div>
+              </div>
+            </div>
+
+            {/* Toggle */}
+            <div className="form-control">
+              <label className="label cursor-pointer bg-base-100 p-3 rounded-xl border border-base-300 flex justify-between gap-2">
+                <span className="label-text font-medium text-[11px] leading-tight">Auto-delete on completion</span>
+                <input 
+                  type="checkbox" 
+                  className="toggle toggle-error toggle-sm shrink-0" 
+                  name='autoDeleteAfterDue' 
+                  checked={taskInfo.autoDeleteAfterDue} 
+                  onChange={handleCheckboxChange} 
+                />
+              </label>
+            </div>
+
+            {/* Submit Button */}
+            <button 
+              className='btn btn-primary btn-block btn-lg rounded-2xl shadow-lg shadow-primary/20 mt-4' 
+              disabled={isSubmitting} 
+              onClick={handleSubmit}
+              type="button"
+            >
+              {isSubmitting ? <span className="loading loading-spinner"></span> : "Create Task"}
+            </button>
+          </div>
+        </div>
+
+        {/* Info/Alert Message - Now correctly spaced below the sidebar card */}
+        <div className="alert bg-info/10 border-info/20 rounded-2xl flex items-start gap-3 p-4 shadow-sm">
+          <Info size={18} className="text-info shrink-0 mt-0.5" />
+          <div className="text-xs leading-relaxed">
+            <span className="font-bold block mb-1">Quick Tip:</span>
+            Organizing tasks by category and priority makes them easier to manage later.
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+);
 }
 
 export default CreateTask
