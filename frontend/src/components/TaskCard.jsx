@@ -1,7 +1,7 @@
 import React from "react";
 import { formatDate } from "../lib/utils";
 import { Link } from 'react-router'
-import { SquarePen, Trash } from "lucide-react";
+import { CircleCheck , SquarePen, Trash } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../lib/axios";
 import { Circle } from "lucide-react";
@@ -14,6 +14,8 @@ function TaskCard({ task, setTasks, setActiveCat }) {
         4: "#a16207", // bg-yellow-700
         5: "#15803d"  // bg-green-700
     };
+
+    const completedCount = task.subTasks.filter(task => task.completed).length;
 
     const handleDelete = async (e, id) => {
         e.preventDefault()
@@ -35,16 +37,20 @@ function TaskCard({ task, setTasks, setActiveCat }) {
         setActiveCat(category)
     }
     return (
-        
         <div className="card w-96 shadow-2xl border-2 border-secondary bg-base-300">
             <Link to={`/Task/${task._id}`}>
                 <div className="card-body">
                     <h2 className="card-title">
                         {task.task}
-                        <Circle color={priorityMap[task.priority]} /> 
+                        {/* <Circle color={priorityMap[task.priority]} />  */}
                     </h2>
-                    <p>{formatDate(new Date(task.createdAt))}</p>
-                    <div className='card-actions justify-start'>{task.completed ? <><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check-big-icon lucide-circle-check-big text-green-400"><path d="M21.801 10A10 10 0 1 1 17 3.335" /><path d="m9 11 3 3L22 4" /></svg> <span>Done</span></> : <div className=""></div>}</div>
+                    <p>{formatDate(new Date(task.schedule.from))}</p>
+
+                    <div className="flex items-center gap-4 mb-3">
+                    {(task.completed && task.subTasks?.length == 0) ? <progress className="progress w-56" value='1' max='1'></progress> : 
+                    <progress className="progress w-56" value={completedCount} max={task.subTasks?.length || 1}></progress>}
+                    {task.completed && <span><CircleCheck color="#24bd24" /></span>}
+                    </div>
                     <div className="card-actions justify-between items-center">
                          <div className='flex items-center gap-1'>
                             <Link to={`/Task/edit/${task._id}`} className=""><SquarePen /></Link>

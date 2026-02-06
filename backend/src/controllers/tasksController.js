@@ -8,7 +8,7 @@ const SORT_MAP = {
   latest: { createdAt: -1 },
   oldest: { createdAt: 1 },
   priority: { priority: 1 },    
-  completion: { completed: 1 },  
+  completion: { completed: -1 },  
 };
 
 export const getTasks = async (req, res) => {
@@ -117,22 +117,22 @@ export const getAiSubtasks = async (req, res) => {
   }
 };
 
-export const updateSubTasks = async (req, res) => {
+export const updateTaskCompletion = async (req, res) => {
   try {
     const { id } = req.params;
-    const { subTasks } = req.body;
+    const updateData = { ...req.body };
 
-    // 1. Validation: Ensure subTasks is actually an array
-    if (!Array.isArray(subTasks)) {
-      return res.status(400).json({ message: "Invalid data format: subTasks must be an array." });
+    // 1. Logic: If subTasks are being updated, auto-calculate 'completed'
+    if (updateData.subTasks && Array.isArray(updateData.subTasks)) {
+      updateData.completed = 
+        updateData.subTasks.length > 0 && 
+        updateData.subTasks.every(st => st.completed === true);
     }
 
-    // 2. Find and Update
-    // { new: true } returns the updated document instead of the old one
-    // { runValidators: true } ensures the new array follows your Schema rules
+    // 2. Find and Update with whatever fields were sent
     const updatedTask = await Task.findByIdAndUpdate(
       id,
-      { $set: { subTasks: subTasks } },
+      { $set: updateData }, 
       { new: true, runValidators: true }
     );
 
@@ -142,7 +142,7 @@ export const updateSubTasks = async (req, res) => {
 
     res.status(200).json(updatedTask);
   } catch (error) {
-    console.error("Error updating subtasks:", error);
+    console.error("Error updating task:", error);
     res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 };

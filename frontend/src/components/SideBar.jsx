@@ -3,10 +3,9 @@ import {LayoutDashboard, ListChecks, Plus, LogOut} from 'lucide-react'
 
 
 const SideBar = ({ theme, setTheme }) => {
-    const themes = ["light", "lofi","winter", "dark", "halloween", "forest", "dracula", "business", "night"];
     const navigate = useNavigate()
     const handleLogout = () => {
-        if (!window.confirm("Are you sure you want to delete this Note ?")) {
+        if (!window.confirm("Are you sure you want to logout ?")) {
             return
         }
         localStorage.removeItem('token')
@@ -30,16 +29,11 @@ const SideBar = ({ theme, setTheme }) => {
                     </div>
                     <div className="navbar-end">
                     <div className="p-4 w-1xl">
-                        <select 
-                            className="select select-bordered w-full rounded-3xl" 
-                            value={theme}
-                            onChange={(e) => setTheme(e.target.value)}
-                        >
-                            <option disabled>Pick a theme</option>
-                            {themes.map((t) => (
-                                <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
-                            ))}
-                        </select>
+                            <label className="toggle text-base-content">
+                                <input type="checkbox" checked={theme} onChange={(e) => setTheme(e.target.checked)} value="business" className="theme-controller" />
+                                <svg aria-label="sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></g></svg>
+                                <svg aria-label="moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></g></svg>
+                            </label>
                     </div>
                     </div>
                 </nav>
@@ -58,8 +52,12 @@ const SideBar = ({ theme, setTheme }) => {
                                 className={({ isActive }) =>
                                     `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "font-bold" : ""}`
                                 } data-tip="dashboard">
-                                <LayoutDashboard size={20} />
-                                <span className="is-drawer-close:hidden">DashBoard</span>
+                                {({ isActive }) => (
+                                    <>
+                                        <LayoutDashboard size={isActive ? 25 : 20} />
+                                        <span className="is-drawer-close:hidden">DashBoard</span>
+                                    </>
+                                )}
                             </NavLink>
                         </li>
 
@@ -67,8 +65,14 @@ const SideBar = ({ theme, setTheme }) => {
                             <NavLink className={({ isActive }) =>
                                     `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "font-bold" : ""}`
                                 } to={'/Tasks'} data-tip="tasks">
-                                <ListChecks  size={20} />
-                                <span className="is-drawer-close:hidden">Tasks</span>
+                                {({ isActive }) => (
+                                    <>
+                                        {/* Icon size logic: 25 if active, 20 if not */}
+                                        <ListChecks size={isActive ? 25 : 20} />
+
+                                        <span className="is-drawer-close:hidden">Tasks</span>
+                                    </>
+                                )}
                             </NavLink>
                         </li>
 
@@ -76,8 +80,14 @@ const SideBar = ({ theme, setTheme }) => {
                             <NavLink className={({ isActive }) =>
                                     `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "font-bold" : ""}`
                                 } to={'/Create'} data-tip="addTask">
-                                <Plus  size={20}/>
-                                <span className="is-drawer-close:hidden">Add Task</span>
+                                {({ isActive }) => (
+                                    <>
+                                        {/* Icon size logic: 25 if active, 20 if not */}
+                                        <Plus size={isActive ? 25 : 20} />
+
+                                        <span className="is-drawer-close:hidden">Add Task</span>
+                                    </>
+                                )}
                             </NavLink>
                         </li>
 

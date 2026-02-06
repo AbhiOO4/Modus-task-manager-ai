@@ -1,7 +1,7 @@
 
 import express from 'express'
 
-import {getTasks, createTask, getTask, deleteTask, editTask, getAiSubtasks, updateSubTasks} from '../controllers/tasksController.js'
+import {getTasks, createTask, getTask, deleteTask, editTask, getAiSubtasks,  updateTaskCompletion} from '../controllers/tasksController.js'
 
 import { taskValidation } from '../middlewares/taskValidation.js'
 
@@ -30,7 +30,7 @@ router.delete('/:id', deleteTask)
 router.post('/ai/task-breakdown', getAiSubtasks)
 
 //path request to update the subtasks completion
-router.patch('/:id', updateSubTasks)
+router.patch('/:id', updateTaskCompletion)
 
 
 

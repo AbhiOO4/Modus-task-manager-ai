@@ -12,7 +12,7 @@ function TasksHeader({sortBy, setSortBy, onClear}) {
             </div>
             <div className="flex-none ">
                 <ul className="menu menu-horizontal px-1">
-                    <li><button className='btn btn-ghost' onClick={onClear}>Clear</button></li>
+                    <li><button className='btn btn-ghost' onClick={onClear}>Reset</button></li>
                     <li>
                         <select defaultValue="Pick a font" onChange={handleSortChange} value={sortBy} className="select select-ghost">
                             <option disabled={true}>Sort By</option>

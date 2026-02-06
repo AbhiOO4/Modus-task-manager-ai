@@ -5,6 +5,7 @@ import { MoveLeft, MoveRight, Circle, Check, SquarePen, X } from 'lucide-react'
 import { formatDateTime } from '../lib/utils'
 import toast from 'react-hot-toast'
 import Modal from '../components/Modal'
+import Loading from '../components/Loading'
 
 function ViewTask() {
   const [task, setTask] = useState({})
@@ -13,6 +14,7 @@ function ViewTask() {
   const [saving, setSaving] = useState(false)
   const [open, setOpen] = useState(false)
   const [open2, setOpen2] = useState(false)
+  const [isToggling, setIsToggling] = useState(false)
 
   const priorityMap = {
     1: "#dc2626", // bg-red-600
@@ -59,8 +61,7 @@ function ViewTask() {
       completed: true
     }))
     setOpen(false)
-    setTask({...task, subTasks: allCompleted})
-    toast.success("Congrats you have completed the task !!")
+    setTask({...task, subTasks: allCompleted, completed: true})
   }
 
   const unCheckAll = () => {
@@ -69,10 +70,14 @@ function ViewTask() {
       completed: false
     }))
     setOpen2(false)
-    setTask({...task, subTasks: allUnChecked})
+    setTask({...task, subTasks: allUnChecked, completed: false})
   }
 
   const saveSubTasks = async () => {
+    const allFinished = task.subTasks.length > 0 && task.subTasks.every(sub => sub.completed);
+    if (allFinished){
+      toast.success("Congrats you have completed the task !!")
+    }
     setSaving(true)
     try {
       // 4. Send the whole updated task or just the subtasks to the backend
@@ -86,7 +91,26 @@ function ViewTask() {
     }
   }
 
-  if (loading) return <div className="p-10">Loading task...</div>
+  const handleCompletedToggle = async () => {
+    const newStatus = !task.completed;
+
+    // Optimistic Update
+    setTask(prev => ({ ...prev, completed: newStatus }));
+    setIsToggling(true);
+
+    try {
+      await api.patch(`/tasks/${id}`, { completed: newStatus });
+      toast.success(newStatus ? "Task Completed!" : "Task Re-opened");
+    } catch (error) {
+      // Revert on error
+      setTask(prev => ({ ...prev, completed: !newStatus }));
+      toast.error("Failed to update status");
+    }finally{
+      setIsToggling(false);
+    }
+  };
+
+  if (loading) return <Loading/>
 
   if (!task) return <div className="p-10">Task not found.</div>
 
@@ -114,8 +138,8 @@ function ViewTask() {
               <span>Priority level - <span className="font-medium">{task.priority}</span></span>
             </p>
           </div>
-          <div className='bg-base-300 rounded-2xl text-lg p-4'>
             {task.subTasks?.length > 0 && (
+              <div className='bg-base-300 rounded-2xl text-lg p-4'>
               <div>
                 <h2 className="text-xl mb-4 font-medium">Sub tasks</h2>
 
@@ -143,9 +167,10 @@ function ViewTask() {
                     </li>
                   ))}
                 </ul>
-              </div>)}
-              <button className='btn btn-soft btn-primary mt-4' onClick={() => setOpen(true)}><Check /></button>
-              <button className='btn btn-soft btn-primary mt-4 ms-2' onClick={() => setOpen2(true)}><X /></button>
+                <button className='btn btn-soft btn-primary mt-4' onClick={() => setOpen(true)}><Check />All Done</button>
+                <button className='btn btn-soft btn-primary mt-4 ms-2' onClick={() => setOpen2(true)}><X />Undo All</button>
+              </div>
+              
             {/* check all confirmation modal */}
             <Modal open={open} onClose={() => setOpen(false)}>
               <div className='text-center w-70'>
@@ -180,11 +205,47 @@ function ViewTask() {
               </div>
             </Modal>
 
-          </div>
+          </div>)}
+
+
           <div className='mt-3 flex gap-4 justify-start'>
-                <button className='btn btn-secondary rounded-3xl px-5' type='button' onClick={saveSubTasks}>Save Changes</button>
-                <Link className='btn btn-soft btn-info rounded-3xl px-5' to={`/edit/${task._id}`}><SquarePen />Edit</Link>
-              </div>
+            {task.subTasks?.length > 0 ? (
+              /* 1. Show "Save Changes" if there ARE subtasks */
+              <button
+                className='btn btn-secondary rounded-3xl px-5'
+                type='button'
+                onClick={saveSubTasks}
+                disabled={saving}
+              >
+                {saving ? (
+                  <div className="flex items-center gap-2">
+                    <span className="loading loading-spinner"></span>
+                    <span>Saving</span>
+                  </div>
+                ) : ('Save Changes')}
+              </button>
+            ) : (
+              <button
+                className={`btn rounded-3xl px-5 ${task.completed ? 'btn-success text-white' : 'btn-secondary'}`}
+                type='button'
+                onClick={handleCompletedToggle}
+                disabled={isToggling}
+              >
+                {isToggling ? (
+                  <span className="loading loading-spinner"></span>
+                ) : task.completed ? (
+                  'Mark Incomplete'
+                ) : (
+                  'Mark as Done'
+                )}
+              </button>
+            )}
+
+            {/* Always show the Edit button */}
+            <Link className='btn btn-soft btn-info rounded-3xl px-5 flex gap-2' to={`/edit/${task._id}`}>
+              <SquarePen size={18} /> Edit
+            </Link>
+          </div>
         </div>
 
       </div>

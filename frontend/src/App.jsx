@@ -11,14 +11,14 @@ import { useEffect, useState } from 'react'
 
 
 const App = () => {
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || false);
 
   useEffect(() => {
     localStorage.setItem('theme', theme);
   }, [theme])
 
   return (
-    <div data-theme={theme}>
+    <div data-theme={theme? `business` : `winter`}>
       <Routes>
 
         <Route path='/' element={<LandingPage />}></Route>
