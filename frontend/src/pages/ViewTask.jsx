@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router'
+import { Link, useParams, useNavigate } from 'react-router'
 import api from '../lib/axios'
-import { MoveLeft, Calendar, Circle, Check, SquarePen, X, Tag, ListChecks, Info } from 'lucide-react'
+import { MoveLeft, Calendar, Circle, Check, SquarePen, X, Tag, ListChecks, Info, Trash } from 'lucide-react'
 import { formatDateTime } from '../lib/utils'
 import toast from 'react-hot-toast'
 import Modal from '../components/Modal'
@@ -15,6 +15,7 @@ function ViewTask() {
   const [open, setOpen] = useState(false)
   const [open2, setOpen2] = useState(false)
   const [isToggling, setIsToggling] = useState(false)
+  const navigate = useNavigate()
 
   const priorityMap = {
     1: "#dc2626", 2: "#c2410c", 3: "#1d4ed8", 4: "#a16207", 5: "#15803d"
@@ -34,7 +35,10 @@ function ViewTask() {
       setLoading(true)
       try {
         const res = await api.get(`/tasks/${id}`);
-        setTask(res.data)
+        const data = res.data
+        const allFinished = data.subTasks.length > 0 && data.subTasks.every(sub => sub.completed);
+        setTask({...data, completed: allFinished})
+        await api.patch(`/tasks/${id}`, { completed: allFinished });
       } catch (error) {
         toast.error("failed to load the task")
       } finally {
@@ -42,7 +46,23 @@ function ViewTask() {
       }
     }
     fetchTask()
+    
   }, [id])
+
+  const handleDelete = async () => {
+    const id = task._id
+        if (!window.confirm("Are you sure you want to delete this task ?")){
+            return 
+        }
+        try{
+            await api.delete(`/tasks/${id}`)
+            toast.success("task deleted successfully")
+            navigate('/Tasks')
+        }catch(error){
+            toast.error("Failed to delete the node")
+            console.log(error)
+        }
+    }
 
   const handleToggleSubTask = (index) => {
     const updatedSubTasks = [...task.subTasks];
@@ -67,7 +87,12 @@ function ViewTask() {
 
   const saveSubTasks = async () => {
     const allFinished = task.subTasks.length > 0 && task.subTasks.every(sub => sub.completed);
-    if (allFinished) toast.success("Congrats you have completed the task !!")
+    if (allFinished){
+      toast.success("Congrats you have completed the task !!")
+    }
+
+    setTask({...task, completed: allFinished})
+  
     setSaving(true)
     try {
       await api.patch(`/tasks/${id}`, { subTasks : task.subTasks });
@@ -101,6 +126,7 @@ function ViewTask() {
           <MoveLeft size={20} /> Back to Dashboard
         </Link>
         <div className="flex gap-2">
+            <button className='btn btn-error' onClick={handleDelete}><Trash/>Delete</button>
            <Link className='btn btn-outline btn-info border-2 gap-2' to={`/edit/${task._id}`}>
               <SquarePen size={18} /> Edit Task
            </Link>
@@ -243,7 +269,7 @@ function ViewTask() {
           </div>
           
           {/* Tip/Info Card */}
-          <div className="alert bg-info/10 border-info/20 text-info-content rounded-2xl">
+          <div className="alert bg-info/10 border-info/20 rounded-2xl">
             <Info size={20} />
             <span className="text-sm">Don't forget to save your progress after checking subtasks!</span>
           </div>

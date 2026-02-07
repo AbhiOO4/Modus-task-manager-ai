@@ -12,18 +12,29 @@ const SORT_MAP = {
 };
 
 export const getTasks = async (req, res) => {
-    try{
+    try {
         const { category, sort = "latest" } = req.query;
-        const filter = {author_id: req.user._id}
+        const graceDate = new Date();
+        graceDate.setDate(graceDate.getDate() - 2);
+        const filter = { author_id: req.user._id };
+        //lazy deletion after the due date
+        await Task.deleteMany({
+            author_id: req.user._id,
+            completed: true,
+            "schedule.to": { $lt: graceDate }
+        });
+
         if (category) {
             filter.category = category.toLowerCase();
         }
-        const sortOption = SORT_MAP[sort] 
-        const tasks = await Task.find(filter).sort(sortOption)
-        res.status(200).json(tasks)
-    }catch(error){
-        res.status(500).json({message: "failed to fetch tasks"})
-        console.log(error)
+
+        const sortOption = SORT_MAP[sort] || { createdAt: -1 };
+        const tasks = await Task.find(filter).sort(sortOption);
+        
+        res.status(200).json(tasks);
+    } catch (error) {
+        res.status(500).json({ message: "failed to fetch tasks" });
+        console.log(error);
     }
 }
 

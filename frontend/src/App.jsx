@@ -12,21 +12,21 @@ import { useEffect, useState } from 'react'
 
 
 const App = () => {
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || false);
+  const [isChecked, setIsChecked] = useState(() => localStorage.getItem('isChecked')==='true');
 
   useEffect(() => {
-    localStorage.setItem('theme', theme);
-  }, [theme])
+    localStorage.setItem('isChecked', isChecked);
+  }, [isChecked])
 
   return (
-    <div data-theme={theme? `business` : `winter`}>
+    <div data-theme={isChecked ? 'night': 'winter'}>
       <Routes>
 
         <Route path='/' element={<LandingPage />}></Route>
         <Route path='/login' element={<Login />} ></Route>
         <Route path='/signup' element={<SignUp />} ></Route>
 
-        <Route element={<SideBar theme={theme} setTheme={setTheme} />}>
+        <Route element={<SideBar isChecked={isChecked} setIsChecked={setIsChecked} />}>
           <Route path='/DashBoard' element={<DashBoard />}></Route>
           <Route path='/Tasks' element={<Tasks />}></Route>
           <Route path='/Create' element={<CreateTask />}></Route>
