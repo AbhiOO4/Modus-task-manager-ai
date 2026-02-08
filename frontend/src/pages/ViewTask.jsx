@@ -57,7 +57,7 @@ function ViewTask() {
         try{
             await api.delete(`/tasks/${id}`)
             toast.success("task deleted successfully")
-            navigate('/Tasks')
+            navigate('/Tasks', {replace: true})
         }catch(error){
             toast.error("Failed to delete the node")
             console.log(error)
@@ -122,8 +122,8 @@ function ViewTask() {
     <div className="max-w-6xl mx-auto p-4 md:p-6 lg:p-8 animate-in fade-in duration-500">
       {/* Top Navigation */}
       <div className="flex items-center justify-between mb-8">
-        <Link className='btn btn-ghost hover:bg-base-300 gap-2' to={'/Tasks'}>
-          <MoveLeft size={20} /> Back to Dashboard
+        <Link className='btn btn-ghost hover:bg-base-300 gap-2 border border-white' to={'/Tasks'}>
+          <MoveLeft size={20} /> Back to Tasks
         </Link>
         <div className="flex gap-2">
             <button className='btn btn-error' onClick={handleDelete}><Trash/>Delete</button>
@@ -147,7 +147,7 @@ function ViewTask() {
                 {task.completed && <span className="badge badge-success badge-lg py-4 px-4 text-white font-bold">Completed</span>}
               </div>
               
-              <h1 className="text-4xl font-extrabold text-base-content leading-tight mb-4">
+              <h1 className="text-4xl font-semibold text-base-content leading-tight mb-4">
                 {task.task}
               </h1>
               

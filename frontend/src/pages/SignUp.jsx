@@ -51,8 +51,8 @@ const SignUp = () => {
 
     return (
         <div className='min-h-screen flex items-center justify-center backgroundImage px-2'>
-            <div className='card bg-base-100 w-96 shadow-xl p-3'>
-                <form onSubmit={handleSubmit} className="w-full max-w-md p-6 rounded-lg shadow">
+            <div className='card bg-base-100/50 w-96 shadow-xl p-3 backdrop-blur-sm'>
+                <form onSubmit={handleSubmit} className="w-full max-w-md p-6 rounded-lg">
                     <label className="input input-bordered flex items-center gap-2 mb-5">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"

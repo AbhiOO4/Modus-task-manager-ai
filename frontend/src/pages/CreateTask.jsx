@@ -1,4 +1,4 @@
-import { Sparkles, Info } from 'lucide-react'
+import { Sparkles, Info, MoveLeft } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import SubTaskItem from '../components/SubTaskItem';
@@ -34,7 +34,7 @@ function CreateTask() {
         ...prev,
         schedule: {
           ...prev.schedule,
-          [name]: value, // Updates specifically inside schedule
+          [name]: value,
         },
       }));
     } else {
@@ -42,7 +42,6 @@ function CreateTask() {
         ...prev,
         [name]: value,
       }));
-      console.log(taskInfo)
     }
   }
 
@@ -168,6 +167,9 @@ function CreateTask() {
 
  return (
   <div className="max-w-6xl mx-auto p-4 md:p-8 animate-in fade-in duration-500">
+    <button className='btn btn-ghost hover:bg-base-300 gap-2 mb-4 border border-white' onClick={() => navigate(-1)}>
+        <MoveLeft/> Go back
+      </button>
     {/* Header */}
     <div className="mb-8">
       <h1 className="text-3xl font-extrabold flex items-center gap-3">

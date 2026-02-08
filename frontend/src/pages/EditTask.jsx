@@ -1,11 +1,17 @@
 
 
-import { Sparkles, Info } from 'lucide-react'
+import { Sparkles, Info, MoveLeft } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import SubTaskItem from '../components/SubTaskItem';
-import { useNavigate, useParams } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router';
 import api from '../lib/axios.js';
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
 
 function EditTask() {
   const navigate = useNavigate();
@@ -23,14 +29,12 @@ function EditTask() {
         const res = await api.get(`/tasks/${id}`);
         const data = res.data;
 
-        // Helper to format date for datetime-local input
         const formatDate = (dateStr) => {
           if (!dateStr) return "";
-          // Slice to get only YYYY-MM-DDTHH:mm
-          return new Date(dateStr).toISOString().slice(0, 16);
+          return dayjs.utc(dateStr).local().format('YYYY-MM-DDTHH:mm');
         };
 
-        // Pre-format the schedule dates
+
         if (data.schedule) {
           data.schedule.from = formatDate(data.schedule.from);
           data.schedule.to = formatDate(data.schedule.to);
@@ -156,10 +160,18 @@ function EditTask() {
   };
 
   const handleSubmit = async (e) => {
+    const updatedTask = {
+      ...taskInfo,
+      schedule: {
+        ...taskInfo.schedule,
+        from: dayjs(taskInfo.schedule.from).utc().toISOString(),
+        to: dayjs(taskInfo.schedule.to).utc().toISOString(),
+      }
+    }
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const response = await api.put(`/tasks/${id}`, taskInfo);
+      const response = await api.put(`/tasks/${id}`, updatedTask);
       toast.success("Task updated successfully!");
       navigate(`/Task/${id}`);
 
@@ -182,6 +194,10 @@ function EditTask() {
 
   return (
   <div className="max-w-6xl mx-auto p-4 md:p-8 animate-in fade-in duration-500">
+      <button className='btn btn-ghost hover:bg-base-300 gap-2 mb-4 border border-white' onClick={() => navigate(-1)}>
+        <MoveLeft/> Go back
+      </button>
+
     {/* Header */}
     <div className="mb-8">
       <h1 className="text-3xl font-extrabold flex items-center gap-3">
