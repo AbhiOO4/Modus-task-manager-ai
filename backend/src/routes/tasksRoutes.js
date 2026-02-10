@@ -1,7 +1,7 @@
 
 import express from 'express'
 
-import {getTasks, createTask, getTask, deleteTask, editTask, getAiSubtasks,  updateTaskCompletion} from '../controllers/tasksController.js'
+import {getTasks, createTask, getTask, deleteTask, editTask, getAiSubtasks,  updateTaskCompletion, getActivityData} from '../controllers/tasksController.js'
 
 import { taskValidation } from '../middlewares/taskValidation.js'
 
@@ -10,6 +10,8 @@ import authenticate from '../middlewares/authenticate.js'
 const router = express.Router()
 
 router.use(authenticate)
+
+router.get('/activity', getActivityData)
 
 //get one task
 router.get('/:id', getTask)
@@ -21,7 +23,7 @@ router.get('/', getTasks)
 router.post('/', taskValidation, createTask)
 
 //edit a task
-router.put('/:id', editTask)
+router.put('/:id',updateTaskCompletion, editTask)
 
 //delete a task
 router.delete('/:id', deleteTask)
@@ -31,6 +33,8 @@ router.post('/ai/task-breakdown', getAiSubtasks)
 
 //path request to update the subtasks completion
 router.patch('/:id', updateTaskCompletion)
+
+
 
 
 

@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast'
 import SubTaskItem from '../components/SubTaskItem';
 import { useNavigate } from 'react-router';
 import api from '../lib/axios.js';
+import { toDateTimeLocal } from '../lib/utils.js';
 
 function CreateTask() {
   const initialTaskState = {
@@ -164,6 +165,43 @@ function CreateTask() {
     }
   };
 
+  const makeTodaysDate = () => {
+    const startDay = new Date();
+    startDay.setHours(0, 0, 0, 0);
+
+    const endDay = new Date();
+    endDay.setHours(23, 59, 59, 999);
+
+    setTaskInfo((prev) => ({
+      ...prev,
+      schedule: {
+        ...prev.schedule,
+        from: toDateTimeLocal(startDay),
+        to: toDateTimeLocal(endDay)
+      }
+    }));
+  };
+
+  const makeTomorrowDate = () => {
+    const startDay = new Date();
+    startDay.setDate(startDay.getDate()+1)
+    startDay.setHours(0, 0, 0, 0);
+
+    const endDay = new Date();
+    endDay.setHours(23, 59, 59, 999);
+    endDay.setDate(endDay.getDate()+1)
+
+    setTaskInfo((prev) => ({
+      ...prev,
+      schedule: {
+        ...prev.schedule,
+        from: toDateTimeLocal(startDay),
+        to: toDateTimeLocal(endDay)
+      }
+    }));
+  }
+
+
 
  return (
   <div className="max-w-6xl mx-auto p-4 md:p-8 animate-in fade-in duration-500">
@@ -322,12 +360,16 @@ function CreateTask() {
                   <input type="datetime-local" className="input input-sm input-ghost w-full p-0 h-auto mt-1 focus:bg-transparent" name='to' value={taskInfo.schedule?.to} onChange={handleChange} />
                 </div>
               </div>
+              <div className='flex gap-2'>
+                <button className='btn btn-sm btn-secondary btn-outline' type='button' onClick={makeTodaysDate}>Today</button>
+                <button className='btn btn-sm btn-primary btn-outline' type='button' onClick={makeTomorrowDate}>Tomorrow</button>
+              </div>
             </div>
 
             {/* Toggle */}
-            <div className="form-control">
-              <label className="label cursor-pointer bg-base-100 p-3 rounded-xl border border-base-300 flex justify-between gap-2">
-                <span className="label-text font-medium text-[11px] leading-tight">Auto-delete on completion</span>
+            <div className="form-control tooltip" data-tip="Enabling it will auto delete your task on completion 2 days after the due date." >
+              <label className="label cursor-poi nter bg-base-100 p-3 rounded-xl border border-base-300 flex justify-between gap-2">
+                <span className="label-text  font-medium text-[11px] leading-tight">Auto-delete on completion</span>
                 <input 
                   type="checkbox" 
                   className="toggle toggle-error toggle-sm shrink-0" 

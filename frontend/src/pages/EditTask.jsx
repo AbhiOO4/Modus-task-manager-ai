@@ -9,6 +9,7 @@ import api from '../lib/axios.js';
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
+import { toDateTimeLocal } from '../lib/utils.js';
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -191,6 +192,42 @@ function EditTask() {
     }
   };
 
+  const makeTodaysDate = () => {
+    const startDay = new Date();
+    startDay.setHours(0, 0, 0, 0);
+
+    const endDay = new Date();
+    endDay.setHours(23, 59, 59, 999);
+
+    setTaskInfo((prev) => ({
+      ...prev,
+      schedule: {
+        ...prev.schedule,
+        from: toDateTimeLocal(startDay),
+        to: toDateTimeLocal(endDay)
+      }
+    }));
+  };
+
+  const makeTomorrowDate = () => {
+    const startDay = new Date();
+    startDay.setDate(startDay.getDate() + 1)
+    startDay.setHours(0, 0, 0, 0);
+
+    const endDay = new Date();
+    endDay.setHours(23, 59, 59, 999);
+    endDay.setDate(endDay.getDate() + 1)
+
+    setTaskInfo((prev) => ({
+      ...prev,
+      schedule: {
+        ...prev.schedule,
+        from: toDateTimeLocal(startDay),
+        to: toDateTimeLocal(endDay)
+      }
+    }));
+  }
+
 
   return (
   <div className="max-w-6xl mx-auto p-4 md:p-8 animate-in fade-in duration-500">
@@ -349,6 +386,10 @@ function EditTask() {
                   <span className="text-[10px] font-bold text-error uppercase">To</span>
                   <input type="datetime-local" className="input input-sm input-ghost w-full p-0 h-auto mt-1 focus:bg-transparent" name='to' value={taskInfo.schedule?.to} onChange={handleChange} />
                 </div>
+              </div>
+              <div className='flex gap-2'>
+                <button className='btn btn-sm btn-secondary btn-outline' type='button' onClick={makeTodaysDate}>Today</button>
+                <button className='btn btn-sm btn-primary btn-outline' type='button' onClick={makeTomorrowDate}>Tomorrow</button>
               </div>
             </div>
 

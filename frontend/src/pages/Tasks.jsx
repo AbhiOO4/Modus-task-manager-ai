@@ -53,6 +53,7 @@ function Tasks() {
 
   // 3. Effect: Persistence
   // Saves UI preferences whenever they change (Doesn't trigger API)
+
   useEffect(() => {
     
     localStorage.setItem("activeCat", activeCat);
@@ -60,24 +61,26 @@ function Tasks() {
     localStorage.setItem("showTask", showTask);
   }, [activeCat, sortBy, showTask]);
 
-  // 4. Categorization Logic
+
+
   const categorizedTasks = useMemo(() => {
-    const now = new Date();
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
     return {
-      // Overdue: Past the 'to' date and NOT completed
-      overdue: tasks.filter((t) => !t.completed && new Date(t.schedule.to) < now),
+      overdue: tasks.filter((t) => !t.completed && new Date(t.schedule.to) < todayStart),
       
-      // Today: Now is within the window (from -> to)
       today: tasks.filter((t) => {
         const start = new Date(t.schedule.from);
+        start.setHours(0,0,0,0)
         const end = new Date(t.schedule.to);
-        return now >= start && now <= end;
+        return todayStart >= start && todayStart <= end;
       }),
       
-      // Upcoming: Hasn't started yet
-      upcoming: tasks.filter((t) => new Date(t.schedule.from) > now),
+      upcoming: tasks.filter((t) => new Date(t.schedule.from) > todayEnd),
       
-      // All: Everything
       all: tasks,
     };
   }, [tasks]);

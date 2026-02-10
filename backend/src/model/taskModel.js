@@ -34,7 +34,7 @@ const taskSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      // examples: "Work", "Personal", "Study", "Health"
+      // examples: "work", "personal", "study", "social", "hobbies"
     },
 
     subTasks: {
@@ -58,12 +58,7 @@ const taskSchema = new mongoose.Schema(
       enum: [1, 2, 3, 4, 5],
       default: 5,
     },
-
-    // emailIds: {
-    //   type: [String],
-    //   default: [],
-    // },
-
+    
     author_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

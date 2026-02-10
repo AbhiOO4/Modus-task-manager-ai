@@ -7,3 +7,23 @@
   /* This overrides the default 1536px to a safer 1650px */
   --breakpoint-2xl: '1600px';
 }
+
+/* Only the Month Names react to the DaisyUI theme */
+.react-calendar-heatmap-month-label {
+  /* This tells the browser to use the background-content color variable */
+  fill: currentColor !important; 
+  color: hsl(var(--bc)) !important;
+  font-size: 10px;
+}
+
+/* Ensure the SVG doesn't clip the labels when they change */
+.react-calendar-heatmap {
+  overflow: visible;
+}
+
+/* Your existing square colors (static) */
+.react-calendar-heatmap .color-empty { fill: rgba(179, 182, 185, 0.377); } /* Stay light gray */
+.react-calendar-heatmap .color-scale-1 { fill: #86efac; }
+.react-calendar-heatmap .color-scale-2 { fill: #22c55e; }
+.react-calendar-heatmap .color-scale-3 { fill: #15803d; }
+.react-calendar-heatmap .color-scale-4 { fill: #166534; }

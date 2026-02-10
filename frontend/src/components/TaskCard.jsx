@@ -1,10 +1,9 @@
-import React from "react";
 import { formatDate } from "../lib/utils";
 import { Link } from 'react-router'
 import { CircleCheck, SquarePen, Trash } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../lib/axios";
-import { Circle } from "lucide-react";
+
 
 function TaskCard({ task, setTasks, setActiveCat }) {
     const priorityMap = {
@@ -16,13 +15,23 @@ function TaskCard({ task, setTasks, setActiveCat }) {
     };
 
     const now = new Date();
+    now.setHours(0,0,0,0)
     const dueDate = new Date(task.schedule.to);
+    dueDate.setHours(0,0,0,0)
     const diffInMs = dueDate - now;
-    const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
+    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
 
     const getDaysLeftStatus = () => {
         if (diffInDays === 0) return { text: 'Due Today', color: 'text-warning' };
-        if (diffInDays < 0) return { text: `${Math.abs(diffInDays)} days overdue`, color: 'text-error font-bold' };
+        if (diffInDays < 0){
+            if (diffInDays === -1){
+                return { text: `1 day overdue`, color: 'text-error font-bold' };
+            }
+            return { text: `${Math.abs(diffInDays)} days overdue`, color: 'text-error font-bold' };
+        }
+        if (diffInDays === 1){
+            return { text: `1 day left`, color: 'text-success' };
+        }
         return { text: `${diffInDays} days left`, color: 'text-success' };
     };
 

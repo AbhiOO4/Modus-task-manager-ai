@@ -2,6 +2,7 @@
 import Task from "../model/taskModel.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import 'dotenv/config';
+import DailyActivity from '../model/dailyActivity.js';
 
 
 const SORT_MAP = {
@@ -15,13 +16,14 @@ export const getTasks = async (req, res) => {
     try {
         const { category, sort = "latest" } = req.query;
         const graceDate = new Date();
-        graceDate.setDate(graceDate.getDate() - 2);
+        graceDate.setDate(graceDate.getDate()-2);
         const filter = { author_id: req.user._id };
         //lazy deletion after the due date
         await Task.deleteMany({
             author_id: req.user._id,
             completed: true,
-            "schedule.to": { $lt: graceDate }
+            "schedule.to": { $lt: graceDate },
+            autoDeleteAfterDue: true
         });
 
         if (category) {
@@ -128,33 +130,69 @@ export const getAiSubtasks = async (req, res) => {
   }
 };
 
+
+
+export const getActivityData = async (req, res) => {
+  try {
+    // 1. Fetch data for the logged-in user
+    // We lean() the query for better performance since we aren't modifying it
+    const activities = await DailyActivity.find({ user: req.user._id })
+      .select('date count -_id')
+      .sort({ date: 1 }) // Keep dates in chronological order
+      .lean();
+
+    // 2. Sanitize: Ensure counts never drop below 0 (safety check)
+    const formattedData = activities.map(item => ({
+      date: item.date,
+      count: Math.max(0, item.count)
+    }));
+
+    res.status(200).json(formattedData);
+  } catch (error) {
+    console.error("Error fetching heatmap data:", error);
+    res.status(500).json({ message: "Failed to load activity data" });
+  }
+};
+
 export const updateTaskCompletion = async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = { ...req.body };
 
-    // 1. Logic: If subTasks are being updated, auto-calculate 'completed'
+    // 1. We need the current task to see if the status is ACTUALLY changing
+    const existingTask = await Task.findById(id);
+    if (!existingTask) return res.status(404).json({ message: "Task not found" });
+
+    // 2. Auto-calculate completion based on subtasks if they were sent
     if (updateData.subTasks && Array.isArray(updateData.subTasks)) {
-      updateData.completed = 
-        updateData.subTasks.length > 0 && 
-        updateData.subTasks.every(st => st.completed === true);
+      updateData.completed = updateData.subTasks.length > 0 && 
+                             updateData.subTasks.every(st => st.completed === true);
     }
 
-    // 2. Find and Update with whatever fields were sent
+    // 3. Consistency Logic: Only run if the 'completed' status is different from DB
+    if (updateData.completed !== undefined && updateData.completed !== existingTask.completed) {
+      const today = new Date().toISOString().split('T')[0];
+      
+      // If now completed: +1, if now un-completed: -1
+      const increment = updateData.completed ? 1 : -1;
+
+      await DailyActivity.findOneAndUpdate(
+        { user: existingTask.user || req.user._id, date: today },
+        { $inc: { count: increment } },
+        { upsert: true }
+      );
+    }
+
+    // 4. Perform the update
     const updatedTask = await Task.findByIdAndUpdate(
       id,
       { $set: updateData }, 
-      { new: true, runValidators: true }
+      { new: true }
     );
-
-    if (!updatedTask) {
-      return res.status(404).json({ message: "Task not found" });
-    }
 
     res.status(200).json(updatedTask);
   } catch (error) {
-    console.error("Error updating task:", error);
-    res.status(500).json({ message: "Internal Server Error", error: error.message });
+    res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
 
