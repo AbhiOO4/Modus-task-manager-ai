@@ -59,7 +59,7 @@ function TaskCard({ task, setTasks, setActiveCat }) {
         setActiveCat(category)
     }
     return (
-        <div className="card w-96 shadow-xl border border-secondary/20 bg-base-300 hover:shadow-2xl transition-all duration-300 group">
+        <div className="card w-full max-w-[24rem] sm:w-96 shadow-xl border border-secondary/20 bg-base-300 hover:shadow-2xl transition-all duration-300 group">
             <Link to={`/Task/${task._id}`}>
                 <div className="card-body p-6">
                     {/* Header: Title & Priority */}

@@ -101,7 +101,6 @@ function Tasks() {
 
   return (
     <div className="min-h-screen pb-10 bg-base-100 font-sans tracking-tight">
-      {/* Navigation Section */}
       <div className="bg-base-100 border-b border-base-content/5 px-2">
         <TasksHeader
           sortBy={sortBy}
@@ -116,14 +115,12 @@ function Tasks() {
       </div>
 
       <main className="px-6 mt-10">
-        {/* Minimalist Heading */}
         <div className="mb-10">
           <h1 className="text-2xl font-medium text-base-content/90 capitalize tracking-normal">
             {showTask === "all" ? "All Tasks" : showTask}
           </h1>
         </div>
 
-        {/* Content States */}
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-32">
             <Loading />
@@ -133,7 +130,6 @@ function Tasks() {
             <EmptyTasks />
           </div>
         ) : (
-          /* The Task Grid - Optimized Spacing */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-6 gap-y-10 items-start">
             {tasksToShow.map((task) => (
               <div key={task._id} className="w-full">

@@ -122,12 +122,12 @@ function ViewTask() {
     <div className="max-w-6xl mx-auto p-4 md:p-6 lg:p-8 animate-in fade-in duration-500">
       {/* Top Navigation */}
       <div className="flex items-center justify-between mb-8">
-        <Link className='btn btn-ghost hover:bg-base-300 gap-2 border border-white' to={-1}>
-          <MoveLeft size={20} /> Go Back 
+        <Link className='btn btn-ghost btn-sm md:btn-md hover:bg-base-300 gap-2 border border-white' to={'/Tasks'}>
+          <MoveLeft size={20} /> Go to tasks
         </Link>
         <div className="flex gap-2">
-            <button className='btn btn-error' onClick={handleDelete}><Trash/>Delete</button>
-           <Link className='btn btn-outline btn-info border-2 gap-2' to={`/edit/${task._id}`}>
+            <button className='btn btn-error btn-sm ms-2' onClick={handleDelete}><Trash/>Delete</button>
+           <Link className='btn btn-outline btn-info btn-sm border-2 gap-2' to={`/edit/${task._id}`}>
               <SquarePen size={18} /> Edit Task
            </Link>
         </div>

@@ -4,6 +4,7 @@ import TaskStats from '../components/TaskStats';
 import CalendarHeatmap from 'react-calendar-heatmap';
 import MinimalTaskCard from '../components/MinimalTaskCard';
 import toast from 'react-hot-toast';
+import { Tooltip } from 'react-tooltip';
 
 function DashBoard() {
   const [tasks, setTasks] = useState([])
@@ -12,7 +13,7 @@ function DashBoard() {
 
   useEffect(() => {
     const fetchTasks = async () => {
-      setIsLoading(true);
+      setIsLoading(true); ``
       try {
         const res = await api.get("/tasks");
         setTasks(res.data);
@@ -52,7 +53,7 @@ function DashBoard() {
       
       {/* 1. TOP RIBBON: Task Stats (Full Width) */}
       <div className="w-full overflow-x-auto rounded-box">
-        <TaskStats tasks={tasks} />
+        <TaskStats tasks={tasks} dailyActivity={heatmapValues}/>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -88,8 +89,8 @@ function DashBoard() {
           <h2 className="text-xl font-bold tracking-tight uppercase opacity-70 border-b border-base-300 pb-2">Consistency</h2>
           <div className="bg-base-200 p-6 rounded-2xl shadow-sm border border-base-300">
             <CalendarHeatmap
-              startDate={new Date('2025-11-01')}
-              endDate={new Date('2026-03-01')}
+              startDate={new Date(new Date().setDate(new Date().getDate() - 120))}
+              endDate={new Date(new Date().setDate(new Date().getDate() + 30))}
               values={heatmapValues}
               classForValue={(value) => {
                 if (!value || value.count === 0) return 'color-empty';
@@ -98,8 +99,23 @@ function DashBoard() {
                 if (value.count >= 3) return 'color-scale-2';
                 return 'color-scale-1';
               }}
-              gutterSize={2}
+
+              tooltipDataAttrs={(value) => {
+                if (!value || !value.date) {
+                  return {
+                    'data-tooltip-id': 'my-tooltip',
+                    'data-tooltip-content': 'No tasks completed',
+                  };
+                }
+                return {
+                  'data-tooltip-id': 'my-tooltip',
+                  'data-tooltip-content': `${value.count} tasks completed on ${value.date}`,
+                };
+              }}
+             
+              gutterSize={3}
             />
+            <Tooltip id="my-tooltip" />
             <div className="mt-4 flex justify-between items-center text-[10px] uppercase opacity-50 font-bold">
                <span>Less</span>
                <div className="flex gap-1">

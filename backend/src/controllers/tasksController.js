@@ -69,7 +69,11 @@ export const getTask = async (req, res) => {
 export const editTask = async (req, res) => {
     try{
         const {id} = req.params
-        const updatedTask = await Task.findByIdAndUpdate(id, req.body, {new: true})
+        const updatedTask = await Task.findById(id)
+        if (updatedTask.author_id != req.user._id){
+          return res.status(403).json({message: "forbiden route"})
+        }
+        await Task.findByIdAndUpdate(id, req.body, {new: true})
         if (!updatedTask) return res.status(404).json({message: "task not found"})
         res.status(200).json({message: "task updated succesfully"})
     }catch(error){
@@ -80,10 +84,15 @@ export const editTask = async (req, res) => {
 
 export const deleteTask = async (req, res) => {
     try{
-        const deletedTask = await Task.findByIdAndDelete(req.params.id)
-        if (!deletedTask){
+        const {id} = req.params
+        const task = await Task.findById(id)
+        if (!task){
             return res.status(404).json({message: "Task not found"})
         }
+        if (task.author_id != req.user._id) {
+          return res.status(403).json({ message: "Not your task" })
+        }
+        await Task.findByIdAndDelete(req.params.id)
         res.status(200).json({message: "Task deleted successfully"})
     }catch(error){
         console.error("Error in deleteTask controller", error)

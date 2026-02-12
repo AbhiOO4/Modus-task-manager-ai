@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Link } from 'react-router';
 
 const LandingPage = () => {
@@ -12,9 +12,6 @@ const LandingPage = () => {
           </Link>
         </div>
         <div className="flex-none gap-4">
-          <Link to="/signup" className="btn btn-ghost btn-sm lowercase font-medium">
-            Sign In
-          </Link>
           <Link to="/signup" className="btn btn-primary btn-sm rounded-full px-6">
             Get Started
           </Link>
