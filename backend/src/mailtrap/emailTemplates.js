@@ -93,3 +93,89 @@ export const PASSWORD_RESET_REQUEST_TEMPLATE = `
 </body>
 </html>
 `;
+
+export const VERIFICATION_SUCCESS_EMAIL_TEMPLATE = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Welcome {username} to Modus</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f4f6f8; font-family: Arial, Helvetica, sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f8; padding:40px 0;">
+    <tr>
+      <td align="center">
+        
+        <!-- Main Container -->
+        <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:12px; padding:40px; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+          
+          <!-- Header -->
+          <tr>
+            <td align="center">
+              <h1 style="margin:0; color:#111827; font-size:28px;">Welcome to <span style="color:#6366f1;">Modus</span> 🚀</h1>
+              <p style="margin:10px 0 30px; color:#6b7280; font-size:16px;">
+                Your personal task management system built for clarity & momentum.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Intro -->
+          <tr>
+            <td>
+              <p style="color:#374151; font-size:16px; line-height:1.6;">
+                Hey there 👋,
+              </p>
+              <p style="color:#374151; font-size:16px; line-height:1.6;">
+                We're excited to have you onboard! Modus helps you organize your work, 
+                stay consistent, and build real productivity momentum.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Features Section -->
+          <tr>
+            <td style="padding-top:20px;">
+              <h3 style="color:#111827;">Here’s what you can do:</h3>
+              <ul style="color:#374151; font-size:15px; line-height:1.8; padding-left:20px;">
+                <li>✅ Create, manage & categorize your tasks effortlessly</li>
+                <li>🧠 Break down tasks automatically using AI from title & description</li>
+                <li>📊 Track daily completed tasks with a GitHub-style heatmap</li>
+                <li>🔥 Build and maintain your productivity streak</li>
+                <li>📈 Visualize completed vs pending tasks with radial progress insights</li>
+                <li>🗂️ Sort, prioritize, and structure your workflow clearly</li>
+              </ul>
+            </td>
+          </tr>
+
+          <!-- CTA Button -->
+          <tr>
+            <td align="center" style="padding:30px 0;">
+              <a href="{{APP_URL}}" 
+                 style="background-color:#6366f1; color:#ffffff; padding:14px 28px; 
+                        text-decoration:none; border-radius:8px; font-size:16px; 
+                        font-weight:bold; display:inline-block;">
+                Go to Dashboard
+              </a>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="border-top:1px solid #e5e7eb; padding-top:20px;">
+              <p style="color:#6b7280; font-size:13px; text-align:center; line-height:1.6;">
+                Stay consistent. Build momentum. Improve daily.  
+                <br><br>
+                — The Modus Team
+              </p>
+            </td>
+          </tr>
+
+        </table>
+        <!-- End Container -->
+
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`

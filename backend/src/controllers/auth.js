@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { generateVerificationToken } from "../utils/generateVerificationCode.js";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
-import { sendVerificationEmail } from "../mailtrap/emails.js";
+import { sendVerificationEmail, sendSuccessEmail } from "../mailtrap/emails.js";
 
 export async function signup (req, res) {
     try{
@@ -67,4 +67,23 @@ export async function login(req, res) {
 
 export function logout(req, res) {
     
+}
+
+export async function verifyEmail(req, res){
+    const {verificationToken} = req.body
+    try{
+        const user = await User.findOne({verificationToken, verificationTokenExpiresAt: {$gt: Date.now()}})
+        if (!user) {
+            return res.status(400).json({success:false, message: "Invalid or expired verification code"})
+        }
+        user.isVerified = true
+        user.verificationToken = undefined
+        user.verificationTokenExpiresAt = undefined
+        await user.save()
+
+        await sendSuccessEmail(user.email, user.name)
+        res.status(200).json({message: "Verication successfull"})
+    }catch(error){
+        res.status(500).json({message: "Internal server error"})
+    }
 }
