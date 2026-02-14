@@ -1,9 +1,9 @@
 import User from "../model/userModel.js";
 import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
 import { generateVerificationToken } from "../utils/generateVerificationCode.js";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
-import { sendVerificationEmail, sendSuccessEmail } from "../mailtrap/emails.js";
+import { sendVerificationEmail, sendSuccessEmail, sendPasswordResetEmail, sendResetSuccessEmail } from "../mailtrap/emails.js";
+import crypto from "crypto"
 
 export async function signup (req, res) {
     try{
@@ -89,5 +89,57 @@ export async function verifyEmail(req, res){
         res.status(200).json({message: "Verication successfull"})
     }catch(error){
         res.status(500).json({message: "Internal server error"})
+    }
+}
+
+export async function forgotPassword(req, res){
+    const {email} = req.body
+    try{
+        const user = await User.findOne({email})
+
+        if (!user){
+            return res.status(400).json({success: false, message: "user not found"})
+        }
+
+        //generating reset token
+        const resetToken = crypto.randomBytes(20).toString("hex")
+        const resetTokenExpiresAt = Date.now() + 60*60*1000 //1hr
+        user.resetPasswordToken = resetToken
+        user.resetPasswordTokenExpiresAt = resetTokenExpiresAt
+        await user.save()
+
+        await sendPasswordResetEmail(user.email, `${process.env.CLIENT_URL}/reset-password/${resetToken}`);
+
+        res.status(200).json({success: true, message: "Password reset email end successfully"})
+    }catch(error){
+        res.status(400).json({success: false, message: error.message})
+    }
+}
+
+export async function resetPassword(req, res){
+    try{    
+        const {token} = req.params
+        const {password} = req.body
+
+        const user = await User.findOne({
+            resetPasswordToken: token,
+            resetPasswordTokenExpiresAt: {$gt: Date.now()}
+        });
+
+        if (!user){
+            return res.status(400).json({success: false, message: "Invalid or expired reset token"})
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10)
+        user.password = hashedPassword
+        user.resetPasswordToken = undefined
+        user.resetPasswordTokenExpiresAt = undefined
+        user.save()
+
+        await sendResetSuccessEmail(user.email)
+
+        res.status(200).json({success: true, message: "Password reset successfully"})
+    }catch(error){
+        res.status(400).json({success: false, message: error.message})
     }
 }
