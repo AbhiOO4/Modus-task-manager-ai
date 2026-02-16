@@ -11,6 +11,7 @@ import EditTask from './pages/EditTask'
 import { useEffect, useState } from 'react'
 import IsLoggedIn from './utils/isLoggedIn'
 import ProtectedRoutes from './utils/ProtectedRoutes'
+import EmailVerification from './pages/EmailVerification'
 
 
 const App = () => {
@@ -21,12 +22,13 @@ const App = () => {
   }, [isChecked])
 
   return (
-    <div data-theme={isChecked ? 'night': 'winter'}>
+    <div data-theme={isChecked ? 'night': 'night'}>  
       <Routes>
         <Route element={<IsLoggedIn />}>
           <Route path='/' element={<LandingPage />}></Route>
           <Route path='/login' element={<Login />} ></Route>
           <Route path='/signup' element={<SignUp />} ></Route>
+          <Route path='/verify-email' element={<EmailVerification/>}></Route>
         </Route>
 
         <Route element={<ProtectedRoutes />}>

@@ -4,6 +4,7 @@ import { generateVerificationToken } from "../utils/generateVerificationCode.js"
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 import { sendVerificationEmail, sendSuccessEmail, sendPasswordResetEmail, sendResetSuccessEmail } from "../sendgrid/emails.js";
 import crypto from "crypto"
+import { rmSync } from "fs";
 
 export async function signup (req, res) {
     try{
@@ -139,6 +140,18 @@ export async function resetPassword(req, res){
         await sendResetSuccessEmail(user.email)
 
         res.status(200).json({success: true, message: "Password reset successfully"})
+    }catch(error){
+        res.status(400).json({success: false, message: error.message})
+    }
+}
+
+export async function checkAuth(req, res){
+    try{
+        const user = await User.findById(req.userId).select("-password")
+        if (!user){
+            return res.status(400).json({success: false, message: "User not found"})
+        }
+        res.status(200).json({success: true, user})
     }catch(error){
         res.status(400).json({success: false, message: error.message})
     }

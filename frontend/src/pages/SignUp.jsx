@@ -4,11 +4,13 @@ import './LandingPage.css'
 import { Link, useNavigate } from 'react-router'
 import toast from 'react-hot-toast'
 import api from '../lib/axios'
+import PasswordStrengthMeter from '../components/PasswordStrengthMeter'
 
 const SignUp = () => {
     const [user, setUser] = useState({ name: '', email: '', password: '' })
     const [registering, setRegistering] = useState(false)
     const navigate = useNavigate()
+
     const handleSubmit = async (e) => {
         e.preventDefault()
         const { name, email, password } = user
@@ -18,25 +20,25 @@ const SignUp = () => {
         setRegistering(true)
         try {
             const result = await api.post('/auth/signup', user)
-            const {success, message} = result.data
+            const { success, message } = result.data
             toast.success(message)
             navigate('/login')
         } catch (err) {
-            if (err.response?.status === 409){
+            if (err.response?.status === 409) {
                 toast.error('User already exists')
             }
-            else if (err.response?.status === 429){
-                toast.error("Too many attempts, try again later", {duration: 5000})
+            else if (err.response?.status === 429) {
+                toast.error("Too many attempts, try again later", { duration: 5000 })
             }
-            else if (err.response?.status === 400){
-                if (err.response?.data?.message){
+            else if (err.response?.status === 400) {
+                if (err.response?.data?.message) {
                     toast.error(err.response.data.message)
                 }
-            }else{
+            } else {
                 toast.error("Sign up failed")
             }
             console.log(err)
-            
+
         } finally {
             setRegistering(false)
         }
@@ -50,64 +52,73 @@ const SignUp = () => {
     }
 
     return (
-        <div className='min-h-screen flex items-center justify-center backgroundImage px-2'>
-            <div className='card bg-base-100/50 w-96 shadow-xl p-3 backdrop-blur-sm'>
-                <form onSubmit={handleSubmit} className="w-full max-w-md p-6 rounded-lg">
-                    <label className="input input-bordered flex items-center gap-2 mb-5">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 16 16"
-                            fill="currentColor"
-                            className="h-4 w-4 opacity-70">
-                            <path
-                                d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" />
-                        </svg>
-                        <input type="text" className="grow" placeholder="Username" name="name" value={user.name} onChange={handleChange} />
-                    </label>
+        <div className='min-h-screen flex items-center justify-center backgroundImage px-4'>
+            {/* card w-full + max-w-md ensures it's responsive but stays centered */}
+            <div className='card bg-base-100/80 w-full max-w-md shadow-2xl backdrop-blur-md border border-white/10'>
+                <div className='card-body p-8 sm:p-10'>
 
-                    <label className="input input-bordered flex items-center gap-2 mb-5">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 16 16"
-                            fill="currentColor"
-                            className="h-4 w-4 opacity-70">
-                            <path
-                                d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
-                            <path
-                                d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
-                        </svg>
-                        <input type="text" className="grow" placeholder="Email" name='email' value={user.email} onChange={handleChange} />
-                    </label>
-                    <label className="input input-bordered flex items-center gap-2">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 16 16"
-                            fill="currentColor"
-                            className="h-4 w-4 opacity-70">
-                            <path
-                                fillRule="evenodd"
-                                d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z"
-                                clipRule="evenodd" />
-                        </svg>
-                        <input type="password" className="grow" placeholder='************' name='password' value={user.password} onChange={handleChange} />
-                    </label>
-                    <div className='flex items-center justify-center mt-10'>
-                        {registering ? <button className="btn">
-                            <span className="loading loading-spinner"></span>
-                            Signing In
-                        </button> : 
-                        <button className='btn btn-primary px-8'>Sign Up</button>
-                        }
+                    {/* Centered Header */}
+                    <div className='text-center mb-8'>
+                        <h2 className='text-3xl font-bold tracking-tight'>Create Account</h2>
+                        <div className='h-1 w-12 bg-primary mx-auto mt-2 rounded-full'></div>
+                    </div>
 
-                    </div>
-                    <div>
-                        <hr className='mt-5 w-auto mx-8 ' />
-                        <p className='text-center'>Or</p>
-                    </div>
-                    <div className='flex items-center justify-center my-5'>
-                        <Link className='btn btn-neutral px-8' to={'/login'}>Login</Link>
-                    </div>
-                </form>
+                    {/* w-full on form ensures it fills the card-body */}
+                    <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5">
+
+                        {/* Each form-control is w-full by default */}
+                        <div className="form-control w-full">
+                            <label className="input input-bordered flex items-center gap-3 bg-base-100/40 w-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="h-4 w-4 opacity-70 shrink-0">
+                                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" />
+                                </svg>
+                                <input type="text" className="grow" placeholder="Username" name="name" value={user.name} onChange={handleChange} />
+                            </label>
+                        </div>
+
+                        <div className="form-control w-full">
+                            <label className="input input-bordered flex items-center gap-3 bg-base-100/40 w-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="h-4 w-4 opacity-70 shrink-0">
+                                    <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
+                                    <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
+                                </svg>
+                                <input type="email" className="grow" placeholder="Email" name='email' value={user.email} onChange={handleChange} />
+                            </label>
+                        </div>
+
+                        <div className="form-control w-full">
+                            <label className="input input-bordered flex items-center gap-3 bg-base-100/40 w-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="h-4 w-4 opacity-70 shrink-0">
+                                    <path fillRule="evenodd" d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z" clipRule="evenodd" />
+                                </svg>
+                                <input type="password" className="grow" placeholder='Password' name='password' value={user.password} onChange={handleChange} />
+                            </label>
+                        </div>
+
+                        <PasswordStrengthMeter password={user.password}/>
+
+                        {/* Wide Submit Button */}
+                        <button
+                            disabled={registering}
+                            className='btn btn-primary w-full mt-4 shadow-lg hover:shadow-primary/20 text-lg transition-all'
+                        >
+                            {registering ? (
+                                <>
+                                    <span className="loading loading-spinner"></span>
+                                    Creating Account...
+                                </>
+                            ) : 'Sign Up'}
+                        </button>
+
+                        {/* Footer Text */}
+                        <p className='text-center text-sm text-base-content/70 mt-4'>
+                            Already have an account?{' '}
+                            <Link to='/login' className='text-primary font-bold hover:underline transition-all'>
+                                Log in
+                            </Link>
+                        </p>
+                    </form>
+                </div>
             </div>
         </div>
     )
