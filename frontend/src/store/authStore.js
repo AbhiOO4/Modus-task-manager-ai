@@ -30,9 +30,19 @@ export const useAuthStore = create((set) => ({
             const response = await axios.post(`${baseURL}/verify-email`, { verificationToken } )
             set({user: response.data.user, isAuthenticated: true, isLoading: false})
         }catch(error){
-            console.log(error)
             set({error: error.response?.data?.message || "error verifying email", isLoading: false})
             throw error
         }
     },
+
+    checkAuth: async () => {
+        set({isCheckingAuth: true, error: null})
+        try{
+            const response = await axios.get(`${baseURL}/check-auth`)
+            console.log(response?.data)
+            set({user: response.data.user, isAuthenticated: true, isCheckingAuth: false})
+        }catch(error){
+            set({error: null, isCheckingAuth: false, isAuthenticated: false})
+        }
+    }
 }))

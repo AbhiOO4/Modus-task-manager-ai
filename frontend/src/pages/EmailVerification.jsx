@@ -63,14 +63,14 @@ function EmailVerification() {
 
   // Auto submit when all fields are filled
 	useEffect(() => {
-		// if (code.every((digit) => digit !== "")) {
-		// 	handleSubmit(new Event("submit"));
-		// }
+		if (code.every((digit) => digit !== "")) {
+			handleSubmit(new Event("submit"));
+		}
 	}, [code]);
 
   return (
     <div className='min-h-screen flex items-center justify-center backgroundImage px-4'>
-      <div className='card bg-base-100/0 w-full max-w-md shadow-2xl backdrop-blur-md border border-white/10'>
+      <div className='card bg-base-100/70 w-full max-w-md shadow-2xl backdrop-blur-md border border-white/10'>
         <div className='card-body p-8 sm:p-10'>
           <h1 className='text-center text-lg font-bold'>Verify Your Email</h1>
           <p className='text-center text-sm mb-6'>Enter the 6-digit code sent to your email address.</p>
@@ -90,9 +90,16 @@ function EmailVerification() {
               ))}
             </div>
           </form>
-          {/* {error && <p className='text-red-500 font-semibold mt-2'>{error}</p> } */}
+          {error && <p className='text-red-500 font-semibold mt-2'>{error}</p> }
 
-          <button className='btn btn-primary mt-4' type='button'  onClick={handleSubmit} >Verify Email</button>
+          <button className='btn btn-primary mt-4' type='button'  onClick={handleSubmit} >
+             {isLoading ? (
+                                <>
+                                    <span className="loading loading-spinner"></span>
+                                    veirfying
+                                </>
+                            ) : 'Verify Email'}
+            </button>
         </div>
       </div>
     </div>

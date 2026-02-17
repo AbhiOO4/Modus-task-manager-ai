@@ -1,4 +1,4 @@
-import {Route, Routes} from 'react-router'
+import {Navigate, Route, Routes} from 'react-router'
 import LandingPage from './pages/LandingPage'
 import DashBoard from './pages/DashBoard'
 import Tasks from './pages/Tasks'
@@ -12,17 +12,35 @@ import { useEffect, useState } from 'react'
 import IsLoggedIn from './utils/isLoggedIn'
 import ProtectedRoutes from './utils/ProtectedRoutes'
 import EmailVerification from './pages/EmailVerification'
+import { useAuthStore } from './store/authStore'
 
+
+const RedirectAuthenticatedUser = ({children}) => {
+  const {isAuthenticated, user} = useAuthStore()
+
+  if (isAuthenticated && user.isVerified){
+    return <Navigate to='/DashBoard' replace />
+  }
+
+  return children
+}
 
 const App = () => {
   const [isChecked, setIsChecked] = useState(() => localStorage.getItem('isChecked')==='true');
+  const { isCheckingAuth, isAuthenticated, checkAuth, user } = useAuthStore();
 
   useEffect(() => {
     localStorage.setItem('isChecked', isChecked);
   }, [isChecked])
 
+  useEffect(() => {
+   checkAuth() 
+  }, [checkAuth])
+
+  
+
   return (
-    <div data-theme={isChecked ? 'night': 'night'}>  
+    <div data-theme={isChecked ? 'night': 'winter'}>  
       <Routes>
         <Route element={<IsLoggedIn />}>
           <Route path='/' element={<LandingPage />}></Route>
