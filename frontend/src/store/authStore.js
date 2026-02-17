@@ -4,6 +4,8 @@ import axios from "axios"
 
 const baseURL = 'http://localhost:3000/api/auth'
 
+axios.defaults.withCredentials = true;
+
 export const useAuthStore = create((set) => ({
     user: null,
     isAuthenticated: false,
@@ -20,5 +22,17 @@ export const useAuthStore = create((set) => ({
             set({error: error.response.data.message || "Error signing up", isLoading: false})
             throw error
         }
-    }
+    },
+
+    verifyEmail: async (verificationToken) => {
+        set({isLoading: true, error: null })
+        try{
+            const response = await axios.post(`${baseURL}/verify-email`, { verificationToken } )
+            set({user: response.data.user, isAuthenticated: true, isLoading: false})
+        }catch(error){
+            console.log(error)
+            set({error: error.response?.data?.message || "error verifying email", isLoading: false})
+            throw error
+        }
+    },
 }))

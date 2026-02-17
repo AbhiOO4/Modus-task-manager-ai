@@ -1,11 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router'
+import { useAuthStore } from '../store/authStore'
 
 function EmailVerification() {
   const [code, setCode] = useState(["","","","","",""])
   const inputRefs = useRef([])
   const navigate = useNavigate()
+
+  const {error, isLoading, verifyEmail} = useAuthStore()
 
   const handleChange = (index, value) => {
     if (index === 5 && code[5] !== "" && value !== "") {
@@ -41,21 +44,28 @@ function EmailVerification() {
     }
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    for (let i of code){
-      if (i == ""){
-        return toast.error("Fill Code Fully")
-      }
+  const handleSubmit = async (e) => {
+    e.preventDefault(); 
+    if (code.includes("")) {
+      return toast.error("Fill Code Fully")
     }
-    alert(code)
+
+    const verificationCode = code.join("").trim()
+    console.log("Sending token:", verificationCode)
+    try{
+      await verifyEmail(verificationCode)
+      toast.success("email verified successfully")
+      navigate('/')
+    }catch(error){
+      console.log(error)
+    }
   }
 
   // Auto submit when all fields are filled
 	useEffect(() => {
-		if (code.every((digit) => digit !== "")) {
-			handleSubmit(new Event("submit"));
-		}
+		// if (code.every((digit) => digit !== "")) {
+		// 	handleSubmit(new Event("submit"));
+		// }
 	}, [code]);
 
   return (
@@ -80,7 +90,9 @@ function EmailVerification() {
               ))}
             </div>
           </form>
-          <button className='btn btn-primary mt-4'  onClick={handleSubmit} >Verify Email</button>
+          {/* {error && <p className='text-red-500 font-semibold mt-2'>{error}</p> } */}
+
+          <button className='btn btn-primary mt-4' type='button'  onClick={handleSubmit} >Verify Email</button>
         </div>
       </div>
     </div>

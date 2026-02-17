@@ -78,7 +78,7 @@ export async function verifyEmail(req, res){
     try{
         const user = await User.findOne({verificationToken, verificationTokenExpiresAt: {$gt: Date.now()}})
         if (!user) {
-            return res.status(400).json({success:false, message: "Invalid or expired verification code"})
+            return res.status(400).json({message: "Invalid or expired verification code", success: false})
         }
         user.isVerified = true
         user.verificationToken = undefined
@@ -86,9 +86,17 @@ export async function verifyEmail(req, res){
         await user.save()
 
         await sendSuccessEmail(user.email, user.name)
-        res.status(200).json({message: "Verication successfull"})
+
+        res.status(200).json({
+			success: true,
+			message: "Email verified successfully",
+			user: {
+				...user._doc,
+				password: undefined,
+			},
+		});
     }catch(error){
-        res.status(500).json({message: "Internal server error"})
+        res.status(500).json({message: "Internal server error", success: false})
     }
 }
 
