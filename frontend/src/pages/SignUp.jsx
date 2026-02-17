@@ -5,11 +5,12 @@ import { Link, useNavigate } from 'react-router'
 import toast from 'react-hot-toast'
 import api from '../lib/axios'
 import PasswordStrengthMeter from '../components/PasswordStrengthMeter'
+import { useAuthStore } from '../store/authStore'
 
 const SignUp = () => {
     const [user, setUser] = useState({ name: '', email: '', password: '' })
-    const [registering, setRegistering] = useState(false)
     const navigate = useNavigate()
+    const { signup, error, isLoading } = useAuthStore()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -17,30 +18,11 @@ const SignUp = () => {
         if (!name || !email || !password) {
             return toast.error('All fields are required')
         }
-        setRegistering(true)
-        try {
-            const result = await api.post('/auth/signup', user)
-            const { success, message } = result.data
-            toast.success(message)
-            navigate('/login')
-        } catch (err) {
-            if (err.response?.status === 409) {
-                toast.error('User already exists')
-            }
-            else if (err.response?.status === 429) {
-                toast.error("Too many attempts, try again later", { duration: 5000 })
-            }
-            else if (err.response?.status === 400) {
-                if (err.response?.data?.message) {
-                    toast.error(err.response.data.message)
-                }
-            } else {
-                toast.error("Sign up failed")
-            }
-            console.log(err)
-
-        } finally {
-            setRegistering(false)
+        try{
+            await signup(email, password, name)
+            navigate('/verify-email')
+        }catch(error){
+            console.log(error)
         }
     }
 
@@ -95,14 +77,17 @@ const SignUp = () => {
                             </label>
                         </div>
 
+                        {error && <p className='text-red-500 font-semibold mt-2'>{error}</p> }
+
                         <PasswordStrengthMeter password={user.password}/>
 
                         {/* Wide Submit Button */}
                         <button
-                            disabled={registering}
+                            disabled={isLoading}
                             className='btn btn-primary w-full mt-4 shadow-lg hover:shadow-primary/20 text-lg transition-all'
+                            type='submit'
                         >
-                            {registering ? (
+                            {isLoading ? (
                                 <>
                                     <span className="loading loading-spinner"></span>
                                     Creating Account...

@@ -4,7 +4,6 @@ import { generateVerificationToken } from "../utils/generateVerificationCode.js"
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 import { sendVerificationEmail, sendSuccessEmail, sendPasswordResetEmail, sendResetSuccessEmail } from "../sendgrid/emails.js";
 import crypto from "crypto"
-import { rmSync } from "fs";
 
 export async function signup (req, res) {
     try{
