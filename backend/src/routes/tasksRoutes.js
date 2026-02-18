@@ -5,11 +5,11 @@ import {getTasks, createTask, getTask, deleteTask, editTask, getAiSubtasks,  upd
 
 import { taskValidation } from '../middlewares/taskValidation.js'
 
-import authenticate from '../middlewares/authenticate.js'
+import { verifyToken } from '../middlewares/verifyToken.js'
 
 const router = express.Router()
 
-router.use(authenticate)
+router.use(verifyToken)
 
 router.get('/activity', getActivityData)
 

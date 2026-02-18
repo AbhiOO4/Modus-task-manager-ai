@@ -2,8 +2,8 @@
 import Joi from 'joi'
 
 export const taskValidation = (req, res, next) => {
-    if (req.user) {
-        req.body.author_id = req.user._id;
+    if (req.userId) {
+        req.body.author_id = req.userId;
     }
     const taskSchema = Joi.object({
         task: Joi.string().min(1).max(60).required(),
@@ -33,8 +33,8 @@ export const taskValidation = (req, res, next) => {
 }
 
 export const updationTaskValidation = (req, res, next) => {
-    if (req.user) {
-        req.body.author_id = req.user._id;
+    if (req.userId) {
+        req.body.author_id = req.userId;
     }
     const taskSchema = Joi.object({
         task: Joi.string().min(1).max(60).required(),

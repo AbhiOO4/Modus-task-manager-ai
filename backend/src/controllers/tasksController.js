@@ -17,10 +17,10 @@ export const getTasks = async (req, res) => {
         const { category, sort = "latest" } = req.query;
         const graceDate = new Date();
         graceDate.setDate(graceDate.getDate()-2);
-        const filter = { author_id: req.user._id };
+        const filter = { author_id: req.userId };
         //lazy deletion after the due date
         await Task.deleteMany({
-            author_id: req.user._id,
+            author_id: req.userId,
             completed: true,
             "schedule.to": { $lt: graceDate },
             autoDeleteAfterDue: true
@@ -56,7 +56,7 @@ export const getTask = async (req, res) => {
         const {id} = req.params
         const task = await Task.findById(id)
         if (!task) return res.status(404).json({message: "Task not found"})
-        if (task.author_id != req.user._id){
+        if (task.author_id != req.userId){
             return res.status(403).json({message: "task doesn't exist"})
         } 
         res.status(200).json(task)
@@ -70,7 +70,7 @@ export const editTask = async (req, res) => {
     try{
         const {id} = req.params
         const updatedTask = await Task.findById(id)
-        if (updatedTask.author_id != req.user._id){
+        if (updatedTask.author_id != req.userId){
           return res.status(403).json({message: "forbiden route"})
         }
         await Task.findByIdAndUpdate(id, req.body, {new: true})
@@ -89,7 +89,7 @@ export const deleteTask = async (req, res) => {
         if (!task){
             return res.status(404).json({message: "Task not found"})
         }
-        if (task.author_id != req.user._id) {
+        if (task.author_id != req.userId) {
           return res.status(403).json({ message: "Not your task" })
         }
         await Task.findByIdAndDelete(req.params.id)
@@ -145,7 +145,7 @@ export const getActivityData = async (req, res) => {
   try {
     // 1. Fetch data for the logged-in user
     // We lean() the query for better performance since we aren't modifying it
-    const activities = await DailyActivity.find({ user: req.user._id })
+    const activities = await DailyActivity.find({ user: req.userId })
       .select('date count -_id')
       .sort({ date: 1 }) // Keep dates in chronological order
       .lean();
@@ -186,7 +186,7 @@ export const updateTaskCompletion = async (req, res) => {
       const increment = updateData.completed ? 1 : -1;
 
       await DailyActivity.findOneAndUpdate(
-        { user: existingTask.user || req.user._id, date: today },
+        { user: existingTask.author_id || req.userId, date: today },
         { $inc: { count: increment } },
         { upsert: true }
       );

@@ -13,7 +13,7 @@ function DashBoard() {
 
   useEffect(() => {
     const fetchTasks = async () => {
-      setIsLoading(true); ``
+      setIsLoading(true); 
       try {
         const res = await api.get("/tasks");
         setTasks(res.data);

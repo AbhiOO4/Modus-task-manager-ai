@@ -1,18 +1,19 @@
 import { NavLink, Outlet, useNavigate } from "react-router"
-import {LayoutDashboard, ListChecks, Plus, LogOut} from 'lucide-react'
+import {LayoutDashboard, ListChecks, Plus, LogOut, Check} from 'lucide-react'
 import { useAuthStore } from "../store/authStore"
 import toast from "react-hot-toast"
 import Loading from "./Loading"
+import { useState } from "react"
+import Modal from './Modal'
 
 
 const SideBar = ({ isChecked, setIsChecked }) => {
     const navigate = useNavigate()
     const {logout, isLoading} = useAuthStore()
+    const [open, setOpen] = useState(false)
 
     const handleLogout = async () => {
-        if (!window.confirm("Are you sure you want to logout ?")) {
-            return
-        }
+       setOpen(false)
         try{
             await logout()
             navigate('/')
@@ -49,7 +50,22 @@ const SideBar = ({ isChecked, setIsChecked }) => {
                     </div>
                 </nav>
                 {/* Page content here */}
-                <div className="p-4"><Outlet/></div>
+                <div className="p-4">
+                    <Outlet/>
+                    <Modal open={open} onClose={() => setOpen(false)}>
+                        <div className='p-6 text-center space-y-4'>
+                            <div className="bg-success/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
+                                <LogOut size={32} className="text-success" />
+                            </div>
+                            <h3 className='text-xl font-bold'>Logout ?</h3>
+                            <p className='text-base-content/70'>Are you sure you want to Logout</p>
+                            <div className='flex gap-5 mt-6'>
+                                <button className='btn btn-secondary btn-outline flex-1' onClick={handleLogout}>Yes</button>
+                                <button className='btn btn-success btn-outline flex-1' onClick={() => setOpen(false)}>No</button>
+                            </div>
+                        </div>
+                    </Modal>
+                </div>
             </div>
 
             <div className="drawer-side is-drawer-close:overflow-visible">
@@ -103,7 +119,7 @@ const SideBar = ({ isChecked, setIsChecked }) => {
                         </li>
 
                         <li>
-                            <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right" type="button" onClick={handleLogout} data-tip="Logout">
+                            <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right" type="button" onClick={()=> setOpen(true)} data-tip="Logout">
                                 <LogOut  size={20}/>
                                 <span className="is-drawer-close:hidden"> Logout</span>
                             </button>
@@ -111,6 +127,8 @@ const SideBar = ({ isChecked, setIsChecked }) => {
                     </ul>
                 </div>
             </div>
+
+            
         </div>
     )
 }
