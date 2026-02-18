@@ -1,18 +1,29 @@
 import { NavLink, Outlet, useNavigate } from "react-router"
 import {LayoutDashboard, ListChecks, Plus, LogOut} from 'lucide-react'
+import { useAuthStore } from "../store/authStore"
+import toast from "react-hot-toast"
+import Loading from "./Loading"
 
 
 const SideBar = ({ isChecked, setIsChecked }) => {
     const navigate = useNavigate()
-    const handleLogout = () => {
+    const {logout, isLoading} = useAuthStore()
+
+    const handleLogout = async () => {
         if (!window.confirm("Are you sure you want to logout ?")) {
             return
         }
-        localStorage.removeItem('token')
-        localStorage.removeItem('username')
-        navigate('/')
-        toast.success("Logged out successfully")
+        try{
+            await logout()
+            navigate('/')
+            toast.success("Logged out successfully")
+        }catch(error){
+            console.log(error)
+            toast.error(error)
+        }
     }
+
+    if (isLoading) return <Loading/>
 
     return (
         <div className="drawer lg:drawer-open">

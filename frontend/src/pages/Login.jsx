@@ -2,12 +2,13 @@ import { Link, useNavigate } from "react-router"
 import './LandingPage.css'
 import { useState } from "react"
 import toast from "react-hot-toast"
-import api from "../lib/axios"
+import { useAuthStore } from "../store/authStore"
 
 function Login() {
     const [user, setUser] = useState({ email: '', password: '' })
-    const [loging, setLoging] = useState(false)
     const navigate = useNavigate()
+    const {login, isLoading, error} = useAuthStore()
+
     const handleChange = (e) => {
         const { name, value } = e.target
         const userChange = { ...user }
@@ -21,33 +22,15 @@ function Login() {
         if (!email || !password) {
             return toast.error('All fields are required !')
         }
-        setLoging(true)
-        try {
-            const result = await api.post('/auth/login', user)
-            const { jwtToken, name } = result.data
-            localStorage.setItem("token", jwtToken)
-            localStorage.setItem("username", name)
-            setTimeout(() => {
-                navigate('/DashBoard')
-            }, 1000)
-            toast.success(`Welcome ${name}`)
-        } catch (error) {
-            if (error.response?.status === 429) {
-                toast.error("Too many attempts, try again later", { duration: 5000 })
-            }
-            else if (error.response?.status === 403) {
-                if (error.response?.data?.message) {
-                    toast.error(error.response.data.message)
-                }
-            } else {
-                toast.error('Not able to login')
-            }
+        try{
+            await login(email, password)
+            navigate('/DashBoard')
+            toast.success("Logged In successfully")
+        }catch(error){
             console.log(error)
-
-        } finally {
-            setLoging(false)
         }
     }
+
     return (
         <div className='min-h-screen flex items-center justify-center backgroundImage px-4'>
             {/* Minimal glassmorphism card */}
@@ -86,12 +69,14 @@ function Login() {
                             </div>
                         </div>
 
+                        {error && <p className='text-red-500 font-semibold mt-2'>{error}</p> }
+
                         {/* Wide Login Button */}
                         <div className='mt-4'>
-                            {loging ? (
-                                <button className="btn btn-primary w-full" disabled>
+                            {isLoading ? (
+                                <button className="btn btn-primary w-full" disabled={isLoading} >
                                     <span className="loading loading-spinner"></span>
-                                    Logging in...
+                                    Logging in
                                 </button>
                             ) : (
                                 <button className='btn btn-primary w-full shadow-lg text-lg'>

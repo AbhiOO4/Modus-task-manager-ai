@@ -1,6 +1,7 @@
 
 import { create } from "zustand"
 import axios from "axios"
+import { Flag } from "lucide-react";
 
 const baseURL = 'http://localhost:3000/api/auth'
 
@@ -39,10 +40,31 @@ export const useAuthStore = create((set) => ({
         set({isCheckingAuth: true, error: null})
         try{
             const response = await axios.get(`${baseURL}/check-auth`)
-            console.log(response?.data)
             set({user: response.data.user, isAuthenticated: true, isCheckingAuth: false})
         }catch(error){
             set({error: null, isCheckingAuth: false, isAuthenticated: false})
+        }
+    },
+
+    login: async (email, password) => {
+        set({isLoading: true, error: null})
+        try{
+            const response = await axios.post(`${baseURL}/login`, {email, password})
+            set({user: response.data.user, isAuthenticated: true, isLoading: false})
+        }catch(error){
+            set({error: error.response?.data?.message || "Error logging in user", isLoading: false})
+            throw error
+        }
+    },
+
+    logout: async () => {
+        set({isLoading: true, error: null})
+        try{
+            await axios.post(`${baseURL}/logout`)
+            set({user: null, isAuthenticated: false, error: null, isLoading: false})
+        }catch(error){
+            set({error: "Error logging out", isLoading: false})
+            throw error
         }
     }
 }))

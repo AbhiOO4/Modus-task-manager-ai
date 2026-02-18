@@ -13,21 +13,13 @@ import IsLoggedIn from './utils/isLoggedIn'
 import ProtectedRoutes from './utils/ProtectedRoutes'
 import EmailVerification from './pages/EmailVerification'
 import { useAuthStore } from './store/authStore'
+import NotFound from './utils/NotFound'
+import Loading from './components/Loading'
 
-
-const RedirectAuthenticatedUser = ({children}) => {
-  const {isAuthenticated, user} = useAuthStore()
-
-  if (isAuthenticated && user.isVerified){
-    return <Navigate to='/DashBoard' replace />
-  }
-
-  return children
-}
 
 const App = () => {
   const [isChecked, setIsChecked] = useState(() => localStorage.getItem('isChecked')==='true');
-  const { isCheckingAuth, isAuthenticated, checkAuth, user } = useAuthStore();
+  const { checkAuth, isCheckingAuth } = useAuthStore();
 
   useEffect(() => {
     localStorage.setItem('isChecked', isChecked);
@@ -38,10 +30,13 @@ const App = () => {
   }, [checkAuth])
 
   
+  if (isCheckingAuth) return <Loading/>
+  
 
   return (
     <div data-theme={isChecked ? 'night': 'winter'}>  
       <Routes>
+       
         <Route element={<IsLoggedIn />}>
           <Route path='/' element={<LandingPage />}></Route>
           <Route path='/login' element={<Login />} ></Route>
@@ -58,6 +53,9 @@ const App = () => {
             <Route path='/edit/:id' element={<EditTask />}></Route>
           </Route>
         </Route>
+
+        <Route path="*" element={<NotFound />} />
+
       </Routes>
     </div>
   )
