@@ -36,9 +36,10 @@ function ViewTask() {
       try {
         const res = await api.get(`/tasks/${id}`);
         const data = res.data
-        const allFinished = data.subTasks.length > 0 && data.subTasks.every(sub => sub.completed);
-        setTask({...data, completed: allFinished})
-        await api.patch(`/tasks/${id}`, { completed: allFinished });
+        // const allFinished = data.subTasks.length > 0 && data.subTasks.every(sub => sub.completed);
+        // setTask({...data, completed: allFinished})
+        // await api.patch(`/tasks/${id}`, { completed: allFinished });
+        setTask(data)
       } catch (error) {
         toast.error("failed to load the task")
       } finally {

@@ -1,7 +1,7 @@
 
 import { create } from "zustand"
 import axios from "axios"
-import { Flag } from "lucide-react";
+
 
 const baseURL = 'http://localhost:3000/api/auth'
 
@@ -14,11 +14,13 @@ export const useAuthStore = create((set) => ({
     isLoading: false,
     isCheckingAuth: true,
 
+    clearError: () => set({ error: null }),
+
     signup: async (email, password, name) => {
         set({isLoading: true, error:null})
         try{
             const response = await axios.post(`${baseURL}/signup`, {email, password, name})
-            set({user: response.data.user, isAuthenticated: true, isLoading: false })
+            set({user: response.data.user, isAuthenticated: true, isLoading: false, error: null })
         }catch(error){
             set({error: error.response.data.message || "Error signing up", isLoading: false})
             throw error
@@ -29,7 +31,7 @@ export const useAuthStore = create((set) => ({
         set({isLoading: true, error: null })
         try{
             const response = await axios.post(`${baseURL}/verify-email`, { verificationToken } )
-            set({user: response.data.user, isAuthenticated: true, isLoading: false})
+            set({user: response.data.user, isAuthenticated: true, isLoading: false, error: null})
         }catch(error){
             set({error: error.response?.data?.message || "error verifying email", isLoading: false})
             throw error
@@ -40,7 +42,7 @@ export const useAuthStore = create((set) => ({
         set({isCheckingAuth: true, error: null})
         try{
             const response = await axios.get(`${baseURL}/check-auth`)
-            set({user: response.data.user, isAuthenticated: true, isCheckingAuth: false})
+            set({user: response.data.user, isAuthenticated: true, isCheckingAuth: false, error: null})
         }catch(error){
             set({error: null, isCheckingAuth: false, isAuthenticated: false})
         }
@@ -50,7 +52,7 @@ export const useAuthStore = create((set) => ({
         set({isLoading: true, error: null})
         try{
             const response = await axios.post(`${baseURL}/login`, {email, password})
-            set({user: response.data.user, isAuthenticated: true, isLoading: false})
+            set({user: response.data.user, isAuthenticated: true, isLoading: false, error: null})
         }catch(error){
             set({error: error.response?.data?.message || "Error logging in user", isLoading: false})
             throw error
@@ -66,5 +68,27 @@ export const useAuthStore = create((set) => ({
             set({error: "Error logging out", isLoading: false})
             throw error
         }
+    },
+
+    forgotPassword: async (email) => {
+        set({isLoading: true, error: null})
+        try{
+            await axios.post(`${baseURL}/forgot-password`, {email})
+            set({isLoading: false, error: null})
+        }catch(error){
+            set({error: error.response?.data?.message || "Error sending password reset email", isLoading: false})
+            throw error
+        }
+    },
+
+    resetPassword: async (token, password) => {
+         set({isLoading: true, error: null})
+         try{
+            const response = await axios.post(`${baseURL}/reset-password/${token}`, {password})
+            set({isLoading: false, error: null})
+         }catch(error){
+            set({error: error.response?.data?.message || "Error resetting password ", isLoading: false})
+            throw error
+         }
     }
 }))

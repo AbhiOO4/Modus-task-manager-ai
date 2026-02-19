@@ -174,8 +174,7 @@ export const updateTaskCompletion = async (req, res) => {
 
     // 2. Auto-calculate completion based on subtasks if they were sent
     if (updateData.subTasks && Array.isArray(updateData.subTasks)) {
-      updateData.completed = updateData.subTasks.length > 0 && 
-                             updateData.subTasks.every(st => st.completed === true);
+      updateData.completed = updateData.subTasks.length > 0 && updateData.subTasks.every(st => st.completed === true);
     }
 
     // 3. Consistency Logic: Only run if the 'completed' status is different from DB

@@ -1,13 +1,13 @@
 import { Link, useNavigate } from "react-router"
 import './LandingPage.css'
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { useAuthStore } from "../store/authStore"
 
 function Login() {
     const [user, setUser] = useState({ email: '', password: '' })
     const navigate = useNavigate()
-    const {login, isLoading, error} = useAuthStore()
+    const {login, isLoading, error, clearError} = useAuthStore()
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -15,6 +15,10 @@ function Login() {
         userChange[name] = value
         setUser(userChange)
     }
+
+    useEffect(() => {
+        clearError()
+    }, [])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -30,6 +34,10 @@ function Login() {
             console.log(error)
         }
     }
+
+    useEffect(() => {
+
+    })
 
     return (
         <div className='min-h-screen flex items-center justify-center backgroundImage px-4'>
@@ -65,7 +73,7 @@ function Login() {
                                 <input type="password" className="grow" placeholder="Password" name="password" value={user.password} onChange={handleChange} required />
                             </label>
                             <div className="flex justify-end mt-1">
-                                <a href="#" className="label-text-alt link link-hover opacity-70">Forgot password?</a>
+                                <Link to='/forgot-password' className="label-text-alt link link-hover opacity-70">Forgot password?</Link>
                             </div>
                         </div>
 

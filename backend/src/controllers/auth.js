@@ -106,7 +106,7 @@ export async function forgotPassword(req, res){
         const user = await User.findOne({email})
 
         if (!user){
-            return res.status(400).json({success: false, message: "user not found"})
+            return res.status(400).json({success: false, message: "user doesn't exist"})
         }
 
         //generating reset token
@@ -118,7 +118,7 @@ export async function forgotPassword(req, res){
 
         await sendPasswordResetEmail(user.email, `${process.env.CLIENT_URL}/reset-password/${resetToken}`);
 
-        res.status(200).json({success: true, message: "Password reset email end successfully"})
+        res.status(200).json({success: true, message: "Password reset email send successfully"})
     }catch(error){
         res.status(400).json({success: false, message: error.message})
     }

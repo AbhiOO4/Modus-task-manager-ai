@@ -15,6 +15,9 @@ import EmailVerification from './pages/EmailVerification'
 import { useAuthStore } from './store/authStore'
 import NotFound from './utils/NotFound'
 import Loading from './components/Loading'
+import ForgotPassword from './pages/ForgotPassword'
+import PasswordResetEmail from './pages/PasswordResetEmail'
+import ResetPassword from './pages/ResetPassword'
 
 
 const App = () => {
@@ -42,6 +45,9 @@ const App = () => {
           <Route path='/login' element={<Login />} ></Route>
           <Route path='/signup' element={<SignUp />} ></Route>
           <Route path='/verify-email' element={<EmailVerification/>}></Route>
+          <Route path='/forgot-password' element={<ForgotPassword/>}></Route>
+          <Route path='/password-reset-email-send' element={<PasswordResetEmail/>}></Route>
+          <Route path='/reset-password/:token' element={<ResetPassword/>}></Route>
         </Route>
 
         <Route element={<ProtectedRoutes />}>
