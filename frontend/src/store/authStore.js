@@ -3,7 +3,7 @@ import { create } from "zustand"
 import axios from "axios"
 
 
-const baseURL = 'http://localhost:3000/api/auth'
+const baseURL = 'https://modus-task-manager.onrender.com/auth'
 
 axios.defaults.withCredentials = true;
 
