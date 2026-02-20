@@ -15,6 +15,8 @@ import cors from 'cors'
 
 import cookieParser from 'cookie-parser'
 
+import path from 'path'
+
 
 dotenv.config({ quiet: true })
 
@@ -33,6 +35,8 @@ app.use(cookieParser())
 
 app.use('/api/auth', authRoutes)
 app.use('/api/tasks', tasksRoutes)
+
+
 
 
 connectDB().then(() => {

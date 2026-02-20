@@ -52,19 +52,7 @@ const SideBar = ({ isChecked, setIsChecked }) => {
                 {/* Page content here */}
                 <div className="p-4">
                     <Outlet/>
-                    <Modal open={open} onClose={() => setOpen(false)}>
-                        <div className='p-6 text-center space-y-4'>
-                            <div className="bg-success/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
-                                <LogOut size={32} className="text-success" />
-                            </div>
-                            <h3 className='text-xl font-bold'>Logout ?</h3>
-                            <p className='text-base-content/70'>Are you sure you want to Logout</p>
-                            <div className='flex gap-5 mt-6'>
-                                <button className='btn btn-secondary btn-outline flex-1' onClick={handleLogout}>Yes</button>
-                                <button className='btn btn-success btn-outline flex-1' onClick={() => setOpen(false)}>No</button>
-                            </div>
-                        </div>
-                    </Modal>
+                   
                 </div>
             </div>
 
@@ -127,6 +115,19 @@ const SideBar = ({ isChecked, setIsChecked }) => {
                     </ul>
                 </div>
             </div>
+            <Modal open={open} onClose={() => setOpen(false)}>
+                <div className='p-6 text-center space-y-4'>
+                    <div className="bg-success/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
+                        <LogOut size={32} className="text-success" />
+                    </div>
+                    <h3 className='text-xl font-bold'>Logout ?</h3>
+                    <p className='text-base-content/70'>Are you sure you want to Logout</p>
+                    <div className='flex gap-5 mt-6'>
+                        <button className='btn btn-secondary btn-outline flex-1' onClick={handleLogout}>Yes</button>
+                        <button className='btn btn-success btn-outline flex-1' onClick={() => setOpen(false)}>No</button>
+                    </div>
+                </div>
+            </Modal>
 
             
         </div>
