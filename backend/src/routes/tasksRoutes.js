@@ -7,7 +7,11 @@ import { taskValidation } from '../middlewares/taskValidation.js'
 
 import { verifyToken } from '../middlewares/verifyToken.js'
 
+import { tasksLimiter } from '../middlewares/rateLimiter.js'
+
 const router = express.Router()
+
+router.use(tasksLimiter)
 
 router.use(verifyToken)
 

@@ -16,7 +16,7 @@ const SideBar = ({ isChecked, setIsChecked }) => {
        setOpen(false)
         try{
             await logout()
-            navigate('/')
+            navigate('/login')
             toast.success("Logged out successfully")
         }catch(error){
             console.log(error)

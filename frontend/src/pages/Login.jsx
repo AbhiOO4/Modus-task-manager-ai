@@ -31,6 +31,9 @@ function Login() {
             navigate('/DashBoard')
             toast.success("Logged In successfully")
         }catch(error){
+            if (error.response?.status === 429 ){
+                toast.error(error.response?.data)
+            }
             console.log(error)
         }
     }

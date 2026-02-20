@@ -5,6 +5,8 @@ import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js
 import { sendVerificationEmail, sendSuccessEmail, sendPasswordResetEmail, sendResetSuccessEmail } from "../sendgrid/emails.js";
 import crypto from "crypto"
 
+
+
 export async function signup (req, res) {
     try{
         const {name, email, password} = req.body
@@ -136,6 +138,10 @@ export async function resetPassword(req, res){
 
         if (!user){
             return res.status(400).json({success: false, message: "Invalid or expired reset token"})
+        }
+
+        if (password.trim().length < 8){
+            return res.status(400).json({success: false, message: "Password should be atleast 8 characters long"})
         }
 
         const hashedPassword = await bcrypt.hash(password, 10)

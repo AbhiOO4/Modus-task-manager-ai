@@ -44,11 +44,12 @@ const App = () => {
           <Route path='/' element={<LandingPage />}></Route>
           <Route path='/login' element={<Login />} ></Route>
           <Route path='/signup' element={<SignUp />} ></Route>
-          <Route path='/verify-email' element={<EmailVerification/>}></Route>
           <Route path='/forgot-password' element={<ForgotPassword/>}></Route>
           <Route path='/password-reset-email-send' element={<PasswordResetEmail/>}></Route>
           <Route path='/reset-password/:token' element={<ResetPassword/>}></Route>
         </Route>
+
+        <Route path='/verify-email' element={<EmailVerification/>}></Route>
 
         <Route element={<ProtectedRoutes />}>
           <Route element={<SideBar isChecked={isChecked} setIsChecked={setIsChecked} />}>

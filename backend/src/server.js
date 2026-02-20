@@ -9,6 +9,8 @@ import tasksRoutes from './routes/tasksRoutes.js'
 
 import authRoutes from './routes/authRoutes.js'
 
+import helmet from 'helmet'
+
 import cors from 'cors'
 
 import cookieParser from 'cookie-parser'
@@ -21,6 +23,8 @@ app.use(cors({
         origin: "http://localhost:5173",
         credentials: true
     }))
+
+app.use(helmet())
 
 app.use(express.json())
 app.use(cookieParser())

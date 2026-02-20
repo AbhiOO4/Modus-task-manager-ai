@@ -352,22 +352,32 @@ function EditTask() {
               </select>
             </div>
 
-            {/* Priority */}
-            <div className="form-control">
-              <label className="label font-bold text-xs uppercase tracking-widest text-base-content/50">Priority Level</label>
-              <input
-                type="range"
-                min="1"
-                max="5"
-                className="range range-primary range-sm mt-2"
-                name='priority'
-                value={taskInfo.priority}
-                onChange={handleChange}
-              />
-              <div className="flex justify-between text-xs px-1 mt-2 font-bold opacity-70">
-                <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+              {/* Priority */}
+              <div className="w-full">
+                <label className="block font-bold text-xs uppercase tracking-widest text-base-content/50 mb-2">
+                  Priority Level
+                </label>
+
+                <div className="px-1 sm:px-2">
+                  <input
+                    type="range"
+                    min="1"
+                    max="5"
+                    name="priority"
+                    value={taskInfo.priority}
+                    onChange={handleChange}
+                    className="range range-primary range-sm w-full"
+                  />
+
+                  <div className="flex justify-between text-[10px] sm:text-xs mt-2 font-bold opacity-70">
+                    <span>1</span>
+                    <span>2</span>
+                    <span>3</span>
+                    <span>4</span>
+                    <span>5</span>
+                  </div>
+                </div>
               </div>
-            </div>
 
             <div className="divider opacity-50 m-0"></div>
 
