@@ -18,7 +18,7 @@ import Loading from './components/Loading'
 import ForgotPassword from './pages/ForgotPassword'
 import PasswordResetEmail from './pages/PasswordResetEmail'
 import ResetPassword from './pages/ResetPassword'
-import IsVerified from './utils/isVerified'
+import IsVerified from './utils/IsVerified'
 
 
 const App = () => {
