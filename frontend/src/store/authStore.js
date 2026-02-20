@@ -3,7 +3,7 @@ import { create } from "zustand"
 import axios from "axios"
 
 
-const baseURL = 'https://modus-task-manager.onrender.com/api/auth'
+const baseURL = `${import.meta.env.VITE_API_URL}/auth`
 
 axios.defaults.withCredentials = true;
 

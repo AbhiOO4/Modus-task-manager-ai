@@ -15,12 +15,13 @@ import cors from 'cors'
 
 import cookieParser from 'cookie-parser'
 
+
 dotenv.config({ quiet: true })
 
 const app = express()
 
 app.use(cors({
-        origin: "https://modus-task-manager-frontend.onrender.com",
+        origin: process.env.CLIENT_URL,
         credentials: true
     }))
 
