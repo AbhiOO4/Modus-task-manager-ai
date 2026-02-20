@@ -9,7 +9,7 @@ import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import EditTask from './pages/EditTask'
 import { useEffect, useState } from 'react'
-import IsLoggedIn from './utils/isLoggedIn'
+import IsLoggedIn from './utils/IsLoggedIn'
 import ProtectedRoutes from './utils/ProtectedRoutes'
 import EmailVerification from './pages/EmailVerification'
 import { useAuthStore } from './store/authStore'
@@ -18,6 +18,7 @@ import Loading from './components/Loading'
 import ForgotPassword from './pages/ForgotPassword'
 import PasswordResetEmail from './pages/PasswordResetEmail'
 import ResetPassword from './pages/ResetPassword'
+import IsVerified from './utils/isVerified'
 
 
 const App = () => {
@@ -49,7 +50,10 @@ const App = () => {
           <Route path='/reset-password/:token' element={<ResetPassword/>}></Route>
         </Route>
 
-        <Route path='/verify-email' element={<EmailVerification/>}></Route>
+        <Route element={<IsVerified/>}>
+          <Route path='/verify-email' element={<EmailVerification/>}></Route>
+        </Route>
+        
 
         <Route element={<ProtectedRoutes />}>
           <Route element={<SideBar isChecked={isChecked} setIsChecked={setIsChecked} />}>
@@ -61,7 +65,7 @@ const App = () => {
           </Route>
         </Route>
 
-        {/* <Route path="*" element={<NotFound />} /> */}
+        <Route path="*" element={<NotFound />} />
 
       </Routes>
     </div>
