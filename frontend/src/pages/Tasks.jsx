@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import TaskCard from "../components/taskCard";
+import TaskCard from "../components/TaskCard";
 import api from "../lib/axios";
 import toast from "react-hot-toast";
 import Loading from "../components/Loading";
