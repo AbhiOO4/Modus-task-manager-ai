@@ -6,11 +6,13 @@ import toast from 'react-hot-toast'
 import api from '../lib/axios'
 import PasswordStrengthMeter from '../components/PasswordStrengthMeter'
 import { useAuthStore } from '../store/authStore'
+import { Eye, EyeOff } from 'lucide-react'
 
 const SignUp = () => {
     const [user, setUser] = useState({ name: '', email: '', password: '' })
     const navigate = useNavigate()
     const { signup, error, isLoading } = useAuthStore()
+    const [showPassword, setShowPassword] = useState(false)
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -18,10 +20,10 @@ const SignUp = () => {
         if (!name || !email || !password) {
             return toast.error('All fields are required')
         }
-        try{
+        try {
             await signup(email, password, name)
             navigate('/verify-email')
-        }catch(error){
+        } catch (error) {
             console.log(error)
         }
     }
@@ -73,13 +75,20 @@ const SignUp = () => {
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="h-4 w-4 opacity-70 shrink-0">
                                     <path fillRule="evenodd" d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z" clipRule="evenodd" />
                                 </svg>
-                                <input type="password" className="grow" placeholder='Password' name='password' value={user.password} onChange={handleChange} />
+                                <input type={showPassword? "text" : "password"} className="grow" placeholder='Password' name='password' value={user.password} onChange={handleChange} />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="hover:text-primary transition-colors"
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
                             </label>
                         </div>
 
-                        {error && <p className='text-red-500 font-semibold mt-2'>{error}</p> }
+                        {error && <p className='text-red-500 font-semibold mt-2'>{error}</p>}
 
-                        <PasswordStrengthMeter password={user.password}/>
+                        <PasswordStrengthMeter password={user.password} />
 
                         {/* Wide Submit Button */}
                         <button

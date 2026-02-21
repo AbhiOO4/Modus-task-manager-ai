@@ -3,11 +3,13 @@ import './LandingPage.css'
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { useAuthStore } from "../store/authStore"
+import { Eye, EyeOff } from "lucide-react"
 
 function Login() {
     const [user, setUser] = useState({ email: '', password: '' })
     const navigate = useNavigate()
     const {login, isLoading, error, clearError} = useAuthStore()
+    const [showPassword, setShowPassword] = useState(false)
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -73,7 +75,14 @@ function Login() {
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="h-4 w-4 opacity-70 shrink-0">
                                     <path fillRule="evenodd" d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z" clipRule="evenodd" />
                                 </svg>
-                                <input type="password" className="grow" placeholder="Password" name="password" value={user.password} onChange={handleChange} required />
+                                <input type={showPassword ? "text" : "password"} className="grow" placeholder="Password" name="password" value={user.password} onChange={handleChange} required />
+                                 <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="hover:text-primary transition-colors"
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
                             </label>
                             <div className="flex justify-end mt-1">
                                 <Link to='/forgot-password' className="label-text-alt link link-hover opacity-70">Forgot password?</Link>
