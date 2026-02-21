@@ -8,96 +8,126 @@ import DailyActivity from '../model/dailyActivity.js';
 const SORT_MAP = {
   latest: { createdAt: -1 },
   oldest: { createdAt: 1 },
-  priority: { priority: 1 },    
-  completion: { completed: -1 },  
+  priority: { priority: 1 },
+  completion: { completed: -1 },
 };
 
 export const getTasks = async (req, res) => {
-    try {
-        const { category, sort = "latest" } = req.query;
-        const graceDate = new Date();
-        graceDate.setDate(graceDate.getDate()-2);
-        const filter = { author_id: req.userId };
-        //lazy deletion after the due date
-        await Task.deleteMany({
-            author_id: req.userId,
-            completed: true,
-            "schedule.to": { $lt: graceDate },
-            autoDeleteAfterDue: true
-        });
+  try {
+    const { category, sort = "latest" } = req.query;
+    const graceDate = new Date();
+    graceDate.setDate(graceDate.getDate() - 2);
+    const filter = { author_id: req.userId };
+    //lazy deletion after the due date
+    await Task.deleteMany({
+      author_id: req.userId,
+      completed: true,
+      "schedule.to": { $lt: graceDate },
+      autoDeleteAfterDue: true
+    });
 
-        if (category) {
-            filter.category = category.toLowerCase();
-        }
-
-        const sortOption = SORT_MAP[sort] || { createdAt: -1 };
-        const tasks = await Task.find(filter).sort(sortOption);
-        
-        res.status(200).json(tasks);
-    } catch (error) {
-        res.status(500).json({ message: "failed to fetch tasks" });
-        console.log(error);
+    if (category) {
+      filter.category = category.toLowerCase();
     }
+
+    const sortOption = SORT_MAP[sort] || { createdAt: -1 };
+    const tasks = await Task.find(filter).sort(sortOption);
+
+    res.status(200).json(tasks);
+  } catch (error) {
+    res.status(500).json({ message: "failed to fetch tasks" });
+    console.log(error);
+  }
 }
 
 export const createTask = async (req, res) => {
-    try{
-        const newTask = new Task({...req.body})
-        const savedTask = await newTask.save()
-        res.status(201).json(savedTask)
-    }catch(error){
-        res.status(500).json({message: "Internal server error"})
-        console.log(error)
-    }
+  try {
+    const { schedule, ...rest } = req.body
+    const newTask = new Task({
+      ...rest,
+      schedule: {
+        from: new Date(schedule.from),
+        to: new Date(schedule.to),
+      }
+    });
+    const savedTask = await newTask.save()
+    res.status(201).json(savedTask)
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" })
+    console.log(error)
+  }
 }
 
 export const getTask = async (req, res) => {
-    try{
-        const {id} = req.params
-        const task = await Task.findById(id)
-        if (!task) return res.status(404).json({message: "Task not found"})
-        if (task.author_id != req.userId){
-            return res.status(403).json({message: "task doesn't exist"})
-        } 
-        res.status(200).json(task)
-    }catch(error){
-        res.status(500).json({message: "Internal server error"})
-        console.log(error)
+  try {
+    const { id } = req.params
+    const task = await Task.findById(id)
+    if (!task) return res.status(404).json({ message: "Task not found" })
+    if (task.author_id != req.userId) {
+      return res.status(403).json({ message: "task doesn't exist" })
     }
+    res.status(200).json(task)
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" })
+    console.log(error)
+  }
 }
 
 export const editTask = async (req, res) => {
-    try{
-        const {id} = req.params
-        const updatedTask = await Task.findById(id)
-        if (updatedTask.author_id != req.userId){
-          return res.status(403).json({message: "forbiden route"})
-        }
-        await Task.findByIdAndUpdate(id, req.body, {new: true})
-        if (!updatedTask) return res.status(404).json({message: "task not found"})
-        res.status(200).json({message: "task updated succesfully"})
-    }catch(error){
-        console.error("Error in editTask controller", error)
-        res.status(500).json({message: "Internal server error"})
+  try {
+    const { id } = req.params;
+
+    const existingTask = await Task.findById(id);
+    if (!existingTask)
+      return res.status(404).json({ message: "Task not found" });
+
+    if (existingTask.author_id.toString() !== req.userId)
+      return res.status(403).json({ message: "Forbidden route" });
+
+    const { schedule, ...rest } = req.body;
+
+    const updateData = {
+      ...rest,
+    };
+
+    // Only update schedule if provided
+    if (schedule) {
+      updateData.schedule = {
+        from: schedule.from ? new Date(schedule.from) : existingTask.schedule.from,
+        to: schedule.to ? new Date(schedule.to) : existingTask.schedule.to,
+      };
     }
-}
+
+    const updatedTask = await Task.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true }
+    );
+
+    res.status(200).json(updatedTask);
+
+  } catch (error) {
+    console.error("Error in editTask controller", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 export const deleteTask = async (req, res) => {
-    try{
-        const {id} = req.params
-        const task = await Task.findById(id)
-        if (!task){
-            return res.status(404).json({message: "Task not found"})
-        }
-        if (task.author_id != req.userId) {
-          return res.status(403).json({ message: "Not your task" })
-        }
-        await Task.findByIdAndDelete(req.params.id)
-        res.status(200).json({message: "Task deleted successfully"})
-    }catch(error){
-        console.error("Error in deleteTask controller", error)
-        res.status(500).json({message: "Internal server error"})
+  try {
+    const { id } = req.params
+    const task = await Task.findById(id)
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" })
     }
+    if (task.author_id != req.userId) {
+      return res.status(403).json({ message: "Not your task" })
+    }
+    await Task.findByIdAndDelete(req.params.id)
+    res.status(200).json({ message: "Task deleted successfully" })
+  } catch (error) {
+    console.error("Error in deleteTask controller", error)
+    res.status(500).json({ message: "Internal server error" })
+  }
 }
 
 
@@ -110,12 +140,12 @@ export const getAiSubtasks = async (req, res) => {
     }
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    
-    const model = genAI.getGenerativeModel({ 
+
+    const model = genAI.getGenerativeModel({
       model: "gemini-3-flash-preview",
-      generationConfig: { 
-        responseMimeType: "application/json" 
-      } 
+      generationConfig: {
+        responseMimeType: "application/json"
+      }
     });
 
     // We refine the prompt to ensure it doesn't try to "talk" to you
@@ -128,12 +158,12 @@ export const getAiSubtasks = async (req, res) => {
     const response = await result.response;
     const text = response.text();
 
-    res.status(200).json(JSON.parse(text)); 
+    res.status(200).json(JSON.parse(text));
 
   } catch (error) {
-      if (error.status === 429) {
-          res.status(429).json({ message: "AI is taking a nap. Please wait a minute and try again!" });
-      }
+    if (error.status === 429) {
+      res.status(429).json({ message: "AI is taking a nap. Please wait a minute and try again!" });
+    }
     console.error("GEMINI API ERROR:", error);
     res.status(500).json({ error: "AI failed to generate tasks", details: error.message });
   }
@@ -180,7 +210,7 @@ export const updateTaskCompletion = async (req, res) => {
     // 3. Consistency Logic: Only run if the 'completed' status is different from DB
     if (updateData.completed !== undefined && updateData.completed !== existingTask.completed) {
       const today = new Date().toISOString().split('T')[0];
-      
+
       // If now completed: +1, if now un-completed: -1
       const increment = updateData.completed ? 1 : -1;
 
@@ -194,7 +224,7 @@ export const updateTaskCompletion = async (req, res) => {
     // 4. Perform the update
     const updatedTask = await Task.findByIdAndUpdate(
       id,
-      { $set: updateData }, 
+      { $set: updateData },
       { new: true }
     );
 
