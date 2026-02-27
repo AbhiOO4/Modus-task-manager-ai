@@ -138,7 +138,16 @@ function CreateTask() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const response = await api.post('/tasks', taskInfo);
+
+      const finalTask = {
+        ...taskInfo,
+        schedule: {
+          from: new Date(taskInfo.schedule.from).toISOString(),
+          to: new Date(taskInfo.schedule.to).toISOString(),
+        }
+      }
+
+      const response = await api.post('/tasks', finalTask);
 
       // Success handling
       toast.success("Task created successfully!");
